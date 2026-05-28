@@ -94,7 +94,27 @@ namespace MCQAPP.Service
             User user = await _context.Users.FirstOrDefaultAsync(x => x.Email == dto.Email);
 
             if (user == null || user.PasswordHash != HashPassword(dto.Password))
-                return ApiResponse<LoginResponseDTO>.Fail("Invalid email or password");
+            {
+                return ApiResponse<LoginResponseDTO>.Fail(
+                    "Invalid email or password"
+                );
+            }
+
+            if ((SD.ROLE_STUDENT == user.Role) &&  string.IsNullOrWhiteSpace(user.DeviceFingerprint))
+            {
+                user.DeviceFingerprint = dto.DeviceFingerprint;
+
+                _context.Users.Update(user);
+
+                await _context.SaveChangesAsync();
+            }
+
+            if ((SD.ROLE_STUDENT == user.Role) && (user.DeviceFingerprint != dto.DeviceFingerprint))
+            {
+                return ApiResponse<LoginResponseDTO>.Fail(
+                    "This account is already logged in on another device. Please login using your registered device."
+                );
+            }
 
             string token = _jwtService.GenerateToken(user);
 
@@ -104,7 +124,10 @@ namespace MCQAPP.Service
                 User = user
             };
 
-            return ApiResponse<LoginResponseDTO>.Success(userResData, "Login successful");
+            return ApiResponse<LoginResponseDTO>.Success(
+                userResData,
+                "Login successful"
+            );
         }
 
         private string HashPassword(string password)

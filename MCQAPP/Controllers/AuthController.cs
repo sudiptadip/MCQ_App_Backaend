@@ -47,6 +47,12 @@ namespace MCQAPP.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO dto)
         {
+            
+            if(string.IsNullOrWhiteSpace(dto.Password) || string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.DeviceFingerprint))
+            {
+                return BadRequest(ApiResponse<LoginResponseDTO>.Fail("Invalid email or password"));
+            }
+
             var result = await _authService.LoginAsync(dto);
 
             if (!result.IsSuccess)
