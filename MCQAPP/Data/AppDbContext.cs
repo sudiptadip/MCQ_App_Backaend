@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MCQAPP.Models;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +37,8 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<TestQuestion> TestQuestions { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<Document> Documents { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -178,6 +180,14 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
             entity.HasOne(d => d.Franchise).WithMany(p => p.Users).HasConstraintName("FK_users_franchise");
+        });
+
+        modelBuilder.Entity<Document>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_documents_id");
+
+            entity.HasOne(d => d.Franchise).WithMany(p => p.Documents)
+                .HasConstraintName("FK_documents_franchise");
         });
 
         OnModelCreatingPartial(modelBuilder);

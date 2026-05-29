@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -44,4 +44,7 @@ public partial class Franchise
 
     [InverseProperty("Franchise")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    [InverseProperty("Franchise")]
+    public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
 }

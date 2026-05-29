@@ -90,6 +90,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 
 var app = builder.Build();
 
@@ -104,6 +105,9 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
+// Enable Static Files serving from wwwroot
+app.UseStaticFiles();
+
 // Enable CORS using the "AllowAll" policy
 app.UseCors("AllowAll");
 
@@ -111,5 +115,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();
