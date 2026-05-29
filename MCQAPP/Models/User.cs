@@ -38,6 +38,9 @@ public partial class User
 
     [Column("updated_at")]
     public DateTime? UpdatedAt { get; set; }
+    
+    [Column("device_fingerprint")]
+    public string? DeviceFingerprint { get; set; }
 
     [ForeignKey("FranchiseId")]
     [InverseProperty("Users")]

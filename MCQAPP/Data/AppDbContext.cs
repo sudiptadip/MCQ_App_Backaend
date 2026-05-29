@@ -48,7 +48,7 @@ public partial class AppDbContext : DbContext
         // configuration (for example the one in appsettings.json) when AddDbContext is used.
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer("Server=SUDIPTA\\SQLEXPRESS;Database=McqAppDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=115.124.106.98;Database=mcqCrackGovDB;User Id=mcqCrackGovDB;Password=JH_arqw6mN4mq0d@;TrustServerCertificate=True;Encrypt=True");
         }
     }
 

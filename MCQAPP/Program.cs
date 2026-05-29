@@ -112,6 +112,9 @@ app.UseStaticFiles();
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
+
+app.UseMiddleware<DeviceValidationMiddleware>();
+
 app.UseAuthorization();
 
 app.MapControllers();
