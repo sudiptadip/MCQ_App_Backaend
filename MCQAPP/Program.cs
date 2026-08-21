@@ -7,12 +7,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// Configure JSON serializer to ignore reference cycles when serializing entities
+// (prevents errors when entities reference each other, e.g., User -> Student -> User)
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        // Optional: keep the default behavior for property naming
+    });
 
 // Add CORS policy to allow any origin, method and header
 builder.Services.AddCors(options =>
