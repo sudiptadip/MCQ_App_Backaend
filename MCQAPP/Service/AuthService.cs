@@ -100,7 +100,7 @@ namespace MCQAPP.Service
                 );
             }
 
-            if ((SD.ROLE_STUDENT == user.Role) &&  string.IsNullOrWhiteSpace(user.DeviceFingerprint))
+            if ((SD.ROLE_STUDENT == user.Role) && string.IsNullOrWhiteSpace(user.DeviceFingerprint))
             {
                 user.DeviceFingerprint = dto.DeviceFingerprint;
 
@@ -114,6 +114,19 @@ namespace MCQAPP.Service
                 return ApiResponse<LoginResponseDTO>.Fail(
                     "This account is already logged in on another device. Please login using your registered device."
                 );
+            }
+
+
+
+            if (SD.ROLE_STUDENT == user.Role)
+            {
+                var studentDetails = _context.Students.FirstOrDefault(s => s.UserId == user.Id);
+                if (studentDetails != null && studentDetails.ValidityDate != null && studentDetails.ValidityDate < DateTime.Now)
+                {
+                    return ApiResponse<LoginResponseDTO>.Fail(
+                        "Your subscription has expired. Please contact your franchise"
+                    );
+                }
             }
 
             string token = _jwtService.GenerateToken(user);

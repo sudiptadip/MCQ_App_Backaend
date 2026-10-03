@@ -27,14 +27,67 @@ public partial class Student
     [Column("created_at")]
     public DateTime? CreatedAt { get; set; }
 
+    [Column("gender")]
+    [StringLength(20)]
+    public string? Gender { get; set; }
+
+    [Column("date_of_birth", TypeName = "date")]
+    public DateTime? DateOfBirth { get; set; }
+
+    [Column("mobile_no")]
+    [StringLength(20)]
+    public string? MobileNo { get; set; }
+
+    [Column("alternate_mobile_no")]
+    [StringLength(20)]
+    public string? AlternateMobileNo { get; set; }
+
+    [Column("email")]
+    [StringLength(255)]
+    public string? Email { get; set; }
+
+    [Column("address_line1")]
+    [StringLength(255)]
+    public string? AddressLine1 { get; set; }
+
+    [Column("address_line2")]
+    [StringLength(255)]
+    public string? AddressLine2 { get; set; }
+
+    [Column("city")]
+    [StringLength(100)]
+    public string? City { get; set; }
+
+    [Column("state")]
+    [StringLength(100)]
+    public string? State { get; set; }
+
+    [Column("country")]
+    [StringLength(100)]
+    public string? Country { get; set; }
+
+    [Column("postal_code")]
+    [StringLength(20)]
+    public string? PostalCode { get; set; }
+
+    [Column("profile_image_url")]
+    [StringLength(500)]
+    public string? ProfileImageUrl { get; set; }
+
+    [Column("status")]
+    public bool Status { get; set; }
+
+    [Column("ValidityDate", TypeName = "datetime")]
+    public DateTime? ValidityDate { get; set; }
+
     [InverseProperty("Student")]
     public virtual ICollection<Attempt> Attempts { get; set; } = new List<Attempt>();
 
-    [ForeignKey("FranchiseId")]
-    [InverseProperty("Students")]
+    [ForeignKey(nameof(FranchiseId))]
+    [InverseProperty(nameof(Franchise.Students))]
     public virtual Franchise Franchise { get; set; } = null!;
 
-    [ForeignKey("UserId")]
-    [InverseProperty("Student")]
+    [ForeignKey(nameof(UserId))]
+    [InverseProperty(nameof(User.Student))]
     public virtual User User { get; set; } = null!;
 }
