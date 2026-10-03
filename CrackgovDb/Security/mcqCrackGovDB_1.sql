@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [mcqCrackGovDB]
+    WITH PASSWORD = N'fwt~ix%f8lbq%eeo8ptfbzulmsFT7_&#$!~<rwsdzBm{X.{m', SID = 0xAFC56289985E24479E547EE692B8A225, DEFAULT_LANGUAGE = [us_english], CHECK_POLICY = OFF;
+

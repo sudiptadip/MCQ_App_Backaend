@@ -1,0 +1,21 @@
+export const SP_NAME = {
+    SP_FRANCHISE: "SpFranchise",
+    SP_STUDENT: "SpStudent",
+    SP_CATEGORY: "SpCategories",
+    SP_QUESTION_ANS: "SpQuestionAns",
+    SP_TEST: "SpTest",
+    SP_TEST_QUESTIONS: "SpTestQuestions",
+    SP_DISPLAY_VIEW: "SpDisplayView",
+    SP_DISPLAY_VIEW_TEST: "SpDisplayViewTest",
+    SP_ATTEMPT: "SpAttempt",
+    SP_USERS: "SpUsers",
+    SP_STUDENT_CATEGORIES: "SpStudentCategories",
+    SP_LEADERBOARD: "SpLeaderboard",
+    SP_STUDY_MATERIAL: "SpStudyMaterial",
+    SP_DISPLAY_VIEW_STUDY_MATERIAL: "SpDisplayViewStudyMaterial",
+    SP_STUDENT_STUDY_MATERIAL: "SpStudentStudyMaterial",
+    SP_FRANCHISE_CATEGORIES: "SpFranchiseCategories",
+    SP_DASHBOARD: "SpDashboard",
+    SP_FEES: "SpFees",
+    SP_STUDENT_DETAILS: "SpStudentDetails"
+};

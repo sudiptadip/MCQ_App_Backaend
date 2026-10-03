@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[students] (
+    [id]                  INT            IDENTITY (1, 1) NOT NULL,
+    [user_id]             INT            NOT NULL,
+    [franchise_id]        INT            NOT NULL,
+    [enrollment_no]       NVARCHAR (100) NULL,
+    [created_at]          DATETIME2 (7)  DEFAULT (getdate()) NULL,
+    [gender]              NVARCHAR (20)  NULL,
+    [date_of_birth]       DATE           NULL,
+    [mobile_no]           NVARCHAR (20)  NULL,
+    [alternate_mobile_no] NVARCHAR (20)  NULL,
+    [email]               NVARCHAR (255) NULL,
+    [address_line1]       NVARCHAR (255) NULL,
+    [address_line2]       NVARCHAR (255) NULL,
+    [city]                NVARCHAR (100) NULL,
+    [state]               NVARCHAR (100) NULL,
+    [country]             NVARCHAR (100) NULL,
+    [postal_code]         NVARCHAR (20)  NULL,
+    [profile_image_url]   NVARCHAR (500) NULL,
+    [status]              BIT            DEFAULT ((1)) NOT NULL,
+    [ValidityDate]        DATETIME       NULL,
+    PRIMARY KEY CLUSTERED ([id] ASC),
+    CONSTRAINT [FK_students_franchise] FOREIGN KEY ([franchise_id]) REFERENCES [dbo].[franchises] ([id]),
+    CONSTRAINT [FK_students_user] FOREIGN KEY ([user_id]) REFERENCES [dbo].[users] ([id]),
+    UNIQUE NONCLUSTERED ([user_id] ASC)
+);
+

@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="CrackgovDb/CrackgovDb.sqlproj" Id="8d80c410-eeff-4db0-b208-e437dab13b33">
+    <Build />
+    <Deploy />
+  </Project>
   <Project Path="MCQAPP/MCQAPP.csproj" />
 </Solution>
