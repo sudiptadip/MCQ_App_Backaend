@@ -63,6 +63,16 @@
     <Folder Include="Security\" />
     <Folder Include="dbo\Functions\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Jobs\" />
+    <Folder Include="Jobs\Tables\" />
+    <Folder Include="Jobs\Functions\" />
+    <Folder Include="Jobs\Stored Procedures\" />
+    <Build Include="Jobs\Jobs.sql" />
+    <Build Include="Jobs\Tables\JobCategories.sql" />
+    <Build Include="Jobs\Tables\JobPosts.sql" />
+    <Build Include="Jobs\Functions\CreateSlug.sql" />
+    <Build Include="Jobs\Stored Procedures\SpJobs.sql" />
+    <Build Include="Jobs\Stored Procedures\SpAnonymousJobs.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\student_assigned_categories.sql" />

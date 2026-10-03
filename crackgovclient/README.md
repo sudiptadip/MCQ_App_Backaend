@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Search engine metadata
+
+Set `NEXT_PUBLIC_SITE_URL` to the site's canonical origin in each deployment environment (for example, `https://your-production-domain`). CrackGov uses this origin to create canonical links, Open Graph URLs, and the sitemap. The app falls back to the Vercel deployment URL when available and to localhost for local development.
+
+Job detail pages generate job-specific title and description metadata, Open Graph and Twitter metadata, and `JobPosting` structured data. `/sitemap.xml` includes published job pages, and `/robots.txt` points crawlers to the sitemap.
+
 ## Getting Started
 
 First, run the development server:

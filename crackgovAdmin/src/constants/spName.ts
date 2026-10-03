@@ -17,5 +17,6 @@ export const SP_NAME = {
     SP_FRANCHISE_CATEGORIES: "SpFranchiseCategories",
     SP_DASHBOARD: "SpDashboard",
     SP_FEES: "SpFees",
-    SP_STUDENT_DETAILS: "SpStudentDetails"
+    SP_STUDENT_DETAILS: "SpStudentDetails",
+    SP_JOBS: "Jobs.SpJobs",
 };

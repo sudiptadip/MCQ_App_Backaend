@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { QueryProvider } from "@/components/QueryProvider";
 import { Toaster } from "sonner";
+import { siteUrl } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,8 +19,32 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CrackGov | For External Students",
-  description: "CrackGov resources and franchise 1 data access for external students.",
+  metadataBase: siteUrl,
+  title: {
+    default: "CrackGov | Government Exam Preparation & Job Updates",
+    template: "%s | CrackGov",
+  },
+  description: "Prepare for government exams with practice tests and study resources. Explore current government job openings, eligibility, deadlines and official application links on CrackGov.",
+  applicationName: "CrackGov",
+  keywords: ["government jobs", "government exam preparation", "latest govt jobs", "job notifications", "mock tests", "exam practice", "study materials"],
+  authors: [{ name: "CrackGov" }],
+  creator: "CrackGov",
+  publisher: "CrackGov",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "CrackGov",
+    title: "CrackGov | Government Exam Preparation & Job Updates",
+    description: "Prepare for government exams and find current public-sector job opportunities on CrackGov.",
+    url: "/",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary",
+    title: "CrackGov | Government Exam Preparation & Job Updates",
+    description: "Prepare for government exams and discover current job opportunities.",
+  },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
 };
 
 export default function RootLayout({

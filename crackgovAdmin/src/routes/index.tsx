@@ -39,6 +39,9 @@ import StudentContentHomePage from "../pages/student-content/StudentContentHomeP
 import StudentContentBrowsePage from "../pages/student-content/StudentContentBrowsePage";
 import { FeesManagementPage } from "../pages/fees/FeesManagementPage";
 import { StudentFeesPage } from "../pages/fees/StudentFeesPage";
+import AdminOnlyRoute from "../components/auth/AdminOnlyRoute";
+import JobListPage from "../pages/jobs/JobListPage";
+import UpsertJobPage from "../pages/jobs/UpsertJobPage";
 
 
 export const router = createBrowserRouter([
@@ -188,6 +191,17 @@ export const router = createBrowserRouter([
                                 element: <UpsertStudyMaterialPage />
                             }
                         ]
+                    },
+                    {
+                        element: <AdminOnlyRoute />,
+                        children: [{
+                            path: "jobs",
+                            children: [
+                                { index: true, element: <JobListPage /> },
+                                { path: "create", element: <UpsertJobPage /> },
+                                { path: "edit/:id", element: <UpsertJobPage /> },
+                            ]
+                        }]
                     },
                     {
                         path: "practice",

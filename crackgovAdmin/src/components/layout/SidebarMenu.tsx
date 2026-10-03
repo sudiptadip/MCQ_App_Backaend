@@ -12,7 +12,8 @@ import {
   HelpCircle,
   Trophy,
   FileText,
-  IndianRupee
+  IndianRupee,
+  BriefcaseBusiness,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ROLES, STORAGE_KEYS } from "../../constants";
@@ -31,6 +32,7 @@ export const navItems = [
   { icon: <ListChevronsDownUp size={20} />, label: "Category", path: "/category", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <BookOpen size={20} />, label: "Questions & Answers", path: "/question-ans", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <FileText size={20} />, label: "Study Material", path: "/study-material", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
+  { icon: <BriefcaseBusiness size={20} />, label: "Job Posts", path: "/jobs", roles: [SUPER_ADMIN] },
   { icon: <ClipboardCheck size={20} />, label: "Tests", path: "/test", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <Monitor size={20} />, label: "Display Views", path: "/display-view", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <GraduationCap size={20} />, label: "Practice", path: "/practice", roles: [SUPER_ADMIN, FRANCHISE_ADMIN, STUDENT] },
