@@ -67,12 +67,26 @@
     <Folder Include="Jobs\Tables\" />
     <Folder Include="Jobs\Functions\" />
     <Folder Include="Jobs\Stored Procedures\" />
+    <Folder Include="Blogs\" />
+    <Folder Include="Blogs\Tables\" />
+    <Folder Include="Blogs\Stored Procedures\" />
+    <Folder Include="CurrentAffairs\" />
+    <Folder Include="CurrentAffairs\Tables\" />
+    <Folder Include="CurrentAffairs\Stored Procedures\" />
     <Build Include="Jobs\Jobs.sql" />
     <Build Include="Jobs\Tables\JobCategories.sql" />
     <Build Include="Jobs\Tables\JobPosts.sql" />
     <Build Include="Jobs\Functions\CreateSlug.sql" />
     <Build Include="Jobs\Stored Procedures\SpJobs.sql" />
     <Build Include="Jobs\Stored Procedures\SpAnonymousJobs.sql" />
+    <Build Include="Blogs\Blogs.sql" />
+    <Build Include="Blogs\Tables\BlogPosts.sql" />
+    <Build Include="Blogs\Stored Procedures\SpBlogs.sql" />
+    <Build Include="Blogs\Stored Procedures\SpAnonymousBlogs.sql" />
+    <Build Include="CurrentAffairs\CurrentAffairs.sql" />
+    <Build Include="CurrentAffairs\Tables\DailyCurrentAffairs.sql" />
+    <Build Include="CurrentAffairs\Stored Procedures\SpDailyCurrentAffairs.sql" />
+    <Build Include="CurrentAffairs\Stored Procedures\SpAnonymousDailyCurrentAffairs.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\student_assigned_categories.sql" />

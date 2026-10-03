@@ -42,6 +42,10 @@ import { StudentFeesPage } from "../pages/fees/StudentFeesPage";
 import AdminOnlyRoute from "../components/auth/AdminOnlyRoute";
 import JobListPage from "../pages/jobs/JobListPage";
 import UpsertJobPage from "../pages/jobs/UpsertJobPage";
+import BlogListPage from "../pages/blogs/BlogListPage";
+import UpsertBlogPage from "../pages/blogs/UpsertBlogPage";
+import DailyCurrentAffairsListPage from "../pages/current-affairs/DailyCurrentAffairsListPage";
+import UpsertDailyCurrentAffairsPage from "../pages/current-affairs/UpsertDailyCurrentAffairsPage";
 
 
 export const router = createBrowserRouter([
@@ -194,14 +198,32 @@ export const router = createBrowserRouter([
                     },
                     {
                         element: <AdminOnlyRoute />,
-                        children: [{
-                            path: "jobs",
-                            children: [
-                                { index: true, element: <JobListPage /> },
-                                { path: "create", element: <UpsertJobPage /> },
-                                { path: "edit/:id", element: <UpsertJobPage /> },
-                            ]
-                        }]
+                        children: [
+                            {
+                                path: "jobs",
+                                children: [
+                                    { index: true, element: <JobListPage /> },
+                                    { path: "create", element: <UpsertJobPage /> },
+                                    { path: "edit/:id", element: <UpsertJobPage /> },
+                                ]
+                            },
+                            {
+                                path: "blogs",
+                                children: [
+                                    { index: true, element: <BlogListPage /> },
+                                    { path: "create", element: <UpsertBlogPage /> },
+                                    { path: "edit/:id", element: <UpsertBlogPage /> },
+                                ]
+                            },
+                            {
+                                path: "current-affairs",
+                                children: [
+                                    { index: true, element: <DailyCurrentAffairsListPage /> },
+                                    { path: "create", element: <UpsertDailyCurrentAffairsPage /> },
+                                    { path: "edit/:id", element: <UpsertDailyCurrentAffairsPage /> },
+                                ]
+                            }
+                        ]
                     },
                     {
                         path: "practice",

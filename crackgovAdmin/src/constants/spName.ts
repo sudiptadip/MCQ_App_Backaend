@@ -19,4 +19,6 @@ export const SP_NAME = {
     SP_FEES: "SpFees",
     SP_STUDENT_DETAILS: "SpStudentDetails",
     SP_JOBS: "Jobs.SpJobs",
+    SP_BLOGS: "Blogs.SpBlogs",
+    SP_DAILY_CURRENT_AFFAIRS: "CurrentAffairs.SpDailyCurrentAffairs",
 };
