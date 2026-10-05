@@ -46,6 +46,11 @@ import BlogListPage from "../pages/blogs/BlogListPage";
 import UpsertBlogPage from "../pages/blogs/UpsertBlogPage";
 import DailyCurrentAffairsListPage from "../pages/current-affairs/DailyCurrentAffairsListPage";
 import UpsertDailyCurrentAffairsPage from "../pages/current-affairs/UpsertDailyCurrentAffairsPage";
+import FaqListPage from "../pages/faqs/FaqListPage";
+import UpsertFaqPage from "../pages/faqs/UpsertFaqPage";
+import TestimonialListPage from "../pages/testimonials/TestimonialListPage";
+import UpsertTestimonialPage from "../pages/testimonials/UpsertTestimonialPage";
+import ContactListPage from "../pages/contact/ContactListPage";
 
 
 export const router = createBrowserRouter([
@@ -222,6 +227,26 @@ export const router = createBrowserRouter([
                                     { path: "create", element: <UpsertDailyCurrentAffairsPage /> },
                                     { path: "edit/:id", element: <UpsertDailyCurrentAffairsPage /> },
                                 ]
+                            },
+                            {
+                                path: "faqs",
+                                children: [
+                                    { index: true, element: <FaqListPage /> },
+                                    { path: "create", element: <UpsertFaqPage /> },
+                                    { path: "edit/:id", element: <UpsertFaqPage /> },
+                                ]
+                            },
+                            {
+                                path: "testimonials",
+                                children: [
+                                    { index: true, element: <TestimonialListPage /> },
+                                    { path: "create", element: <UpsertTestimonialPage /> },
+                                    { path: "edit/:id", element: <UpsertTestimonialPage /> },
+                                ]
+                            },
+                            {
+                                path: "contact-inquiries",
+                                element: <ContactListPage />
                             }
                         ]
                     },

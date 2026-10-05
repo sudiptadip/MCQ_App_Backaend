@@ -16,6 +16,8 @@ import {
   BriefcaseBusiness,
   Newspaper,
   CalendarDays,
+  MessageSquareQuote,
+  Mail,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ROLES, STORAGE_KEYS } from "../../constants";
@@ -37,6 +39,9 @@ export const navItems = [
   { icon: <BriefcaseBusiness size={20} />, label: "Job Posts", path: "/jobs", roles: [SUPER_ADMIN] },
   { icon: <Newspaper size={20} />, label: "Blog Posts", path: "/blogs", roles: [SUPER_ADMIN] },
   { icon: <CalendarDays size={20} />, label: "Daily Current Affairs", path: "/current-affairs", roles: [SUPER_ADMIN] },
+  { icon: <HelpCircle size={20} />, label: "FAQs Management", path: "/faqs", roles: [SUPER_ADMIN] },
+  { icon: <MessageSquareQuote size={20} />, label: "Testimonials", path: "/testimonials", roles: [SUPER_ADMIN] },
+  { icon: <Mail size={20} />, label: "Contact Inquiries", path: "/contact-inquiries", roles: [SUPER_ADMIN] },
   { icon: <ClipboardCheck size={20} />, label: "Tests", path: "/test", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <Monitor size={20} />, label: "Display Views", path: "/display-view", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <GraduationCap size={20} />, label: "Practice", path: "/practice", roles: [SUPER_ADMIN, FRANCHISE_ADMIN, STUDENT] },

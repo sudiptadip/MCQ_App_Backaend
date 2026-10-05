@@ -21,4 +21,7 @@ export const SP_NAME = {
     SP_JOBS: "Jobs.SpJobs",
     SP_BLOGS: "Blogs.SpBlogs",
     SP_DAILY_CURRENT_AFFAIRS: "CurrentAffairs.SpDailyCurrentAffairs",
+    SP_FAQS: "SpFaqs",
+    SP_TESTIMONIALS: "SpTestimonials",
+    SP_CONTACT_US: "SpContactUs",
 };
