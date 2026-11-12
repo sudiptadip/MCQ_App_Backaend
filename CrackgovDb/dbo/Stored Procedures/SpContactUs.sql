@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[SpContactUs]
+﻿CREATE PROCEDURE [dbo].[SpContactUs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,

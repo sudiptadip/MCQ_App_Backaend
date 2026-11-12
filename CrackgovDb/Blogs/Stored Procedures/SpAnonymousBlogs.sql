@@ -1,6 +1,8 @@
-CREATE PROCEDURE [Blogs].[SpAnonymousBlogs]
+﻿CREATE PROCEDURE [Blogs].[SpAnonymousBlogs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
+    @UserId INT = NULL,
+    @FranchiseId INT = NULL,
     @Output NVARCHAR(MAX) OUTPUT
 AS
 BEGIN

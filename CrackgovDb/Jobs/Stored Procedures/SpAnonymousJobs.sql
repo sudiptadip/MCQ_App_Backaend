@@ -1,6 +1,8 @@
-CREATE PROCEDURE [Jobs].[SpAnonymousJobs]
+﻿CREATE PROCEDURE [Jobs].[SpAnonymousJobs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
+    @UserId INT = NULL,
+    @FranchiseId INT = NULL,
     @Output NVARCHAR(MAX) OUTPUT
 AS
 BEGIN
@@ -31,8 +33,7 @@ BEGIN
               AND (@Search IS NULL OR p.Title LIKE '%' + @Search + '%'
                    OR p.Department LIKE '%' + @Search + '%'
                    OR c.Name LIKE '%' + @Search + '%'
-                   OR p.Location LIKE '%' + @Search + '%'
-                   OR p.Slug LIKE '%' + @Search + '%');
+                   OR p.Location LIKE '%' + @Search + '%');
 
             SET @Output = (
                 SELECT 200 AS StatusCode, 1 AS IsSuccess, 'Success' AS [Message],
@@ -68,8 +69,7 @@ BEGIN
                                   AND (@Search IS NULL OR p.Title LIKE '%' + @Search + '%'
                                        OR p.Department LIKE '%' + @Search + '%'
                                        OR c.Name LIKE '%' + @Search + '%'
-                                       OR p.Location LIKE '%' + @Search + '%'
-                                       OR p.Slug LIKE '%' + @Search + '%')
+                                       OR p.Location LIKE '%' + @Search + '%')
                                 ORDER BY p.IsFeatured DESC,
                                     COALESCE(p.ApplicationDeadline, CONVERT(DATE, '99991231')) ASC,
                                     p.CreatedOn DESC

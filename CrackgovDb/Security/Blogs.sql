@@ -1,3 +1,3 @@
-﻿CREATE SCHEMA [mcqCrackGovDB]
+﻿CREATE SCHEMA [Blogs]
     AUTHORIZATION [mcqCrackGovDB];
 

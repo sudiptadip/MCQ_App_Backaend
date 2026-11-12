@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[users] (
+﻿CREATE TABLE [dbo].[users] (
     [id]                 INT            IDENTITY (1, 1) NOT NULL,
     [name]               NVARCHAR (255) NOT NULL,
     [email]              NVARCHAR (255) NOT NULL,
@@ -8,11 +8,12 @@ CREATE TABLE [dbo].[users] (
     [created_at]         DATETIME2 (7)  DEFAULT (getdate()) NULL,
     [updated_at]         DATETIME2 (7)  NULL,
     [device_fingerprint] NVARCHAR (200) NULL,
-    [is_verified]        BIT            DEFAULT ((0)) NOT NULL,
+    [is_verified]        BIT            DEFAULT ((1)) NOT NULL,
     [otp]                NVARCHAR (10)  NULL,
     [otp_expiry]         DATETIME2 (7)  NULL,
     PRIMARY KEY CLUSTERED ([id] ASC),
-    CONSTRAINT [CK_users_role] CHECK ([role]='STUDENT' OR [role]='FRANCHISE_ADMIN' OR [role]='SUPER_ADMIN' OR [role]='WEB_STUDENT'),
+    CHECK ([role]='STUDENT' OR [role]='WEB_STUDENT' OR [role]='FRANCHISE_ADMIN' OR [role]='SUPER_ADMIN'),
     CONSTRAINT [FK_users_franchise] FOREIGN KEY ([franchise_id]) REFERENCES [dbo].[franchises] ([id]),
     UNIQUE NONCLUSTERED ([email] ASC)
 );
+

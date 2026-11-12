@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Blogs].[SpBlogs]
+﻿CREATE PROCEDURE [Blogs].[SpBlogs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,
@@ -13,7 +13,7 @@ BEGIN
             @Title NVARCHAR(200), @Slug NVARCHAR(220), @Excerpt NVARCHAR(500), @ImageUrl NVARCHAR(1000),
             @HtmlContent NVARCHAR(MAX), @TemplateKey NVARCHAR(40), @AuthorName NVARCHAR(120), @Status NVARCHAR(20),
             @IsFeatured BIT, @PageTitle NVARCHAR(200), @MetaTitle NVARCHAR(200), @MetaDescription NVARCHAR(320),
-            @MetaKeywords NVARCHAR(500), @CanonicalUrl NVARCHAR(1000), @SlugBase NVARCHAR(220), @SlugSuffix INT;
+            @MetaKeywords NVARCHAR(500), @CanonicalUrl NVARCHAR(1000);
 
         IF @Mode = 1
         BEGIN
@@ -67,13 +67,8 @@ BEGIN
             SET @PageTitle=COALESCE(NULLIF(LTRIM(RTRIM(@PageTitle)),N''),@Title);
             SET @MetaTitle=COALESCE(NULLIF(LTRIM(RTRIM(@MetaTitle)),N''),@PageTitle);
             SET @MetaDescription=COALESCE(NULLIF(LTRIM(RTRIM(@MetaDescription)),N''),LEFT(COALESCE(@Excerpt,@Title),320));
-            SET @SlugBase=@Slug;
-            SET @SlugSuffix=1;
-            WHILE EXISTS(SELECT 1 FROM [Blogs].[BlogPosts] WHERE Slug=@Slug AND Id<>ISNULL(@Id,0))
-            BEGIN
-                SET @Slug=LEFT(@SlugBase,205)+N'-'+CONVERT(NVARCHAR(12),@SlugSuffix);
-                SET @SlugSuffix+=1;
-            END;
+            IF EXISTS(SELECT 1 FROM [Blogs].[BlogPosts] WHERE Slug=@Slug AND Id<>ISNULL(@Id,0))
+                SET @Slug=LEFT(@Slug,205)+N'-'+CONVERT(NVARCHAR(12),ISNULL(@Id,0)+1);
             IF ISNULL(@Id,0)>0
             BEGIN
                 IF NOT EXISTS(SELECT 1 FROM [Blogs].[BlogPosts] WHERE Id=@Id)

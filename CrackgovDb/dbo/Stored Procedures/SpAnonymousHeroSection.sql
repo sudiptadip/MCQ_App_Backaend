@@ -1,6 +1,8 @@
-CREATE PROCEDURE [dbo].[SpAnonymousHeroSection]
+﻿CREATE PROCEDURE [dbo].[SpAnonymousHeroSection]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
+    @UserId INT = NULL,
+    @FranchiseId INT = NULL,
     @Output NVARCHAR(MAX) OUTPUT
 AS
 BEGIN
@@ -52,4 +54,3 @@ BEGIN
         SET @Output = (SELECT 500 AS StatusCode, 0 AS IsSuccess, 'Unable to load Hero Section.' AS [Message] FOR JSON PATH, WITHOUT_ARRAY_WRAPPER);
     END CATCH;
 END;
-GO

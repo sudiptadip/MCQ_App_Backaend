@@ -1,4 +1,4 @@
-CREATE PROCEDURE [Jobs].[SpJobs]
+﻿CREATE PROCEDURE [Jobs].[SpJobs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,
@@ -20,7 +20,7 @@ BEGIN
             @IsFeatured BIT, @Slug NVARCHAR(220), @PageTitle NVARCHAR(200),
             @MetaTitle NVARCHAR(200), @MetaDescription NVARCHAR(320), @MetaKeywords NVARCHAR(500);
 
-        IF @Mode = 1
+        IF @Mode = 1 OR @Mode = 5
         BEGIN
             SELECT @Page = TRY_CONVERT(INT, JSON_VALUE(@Json, '$.page')),
                    @PageSize = TRY_CONVERT(INT, JSON_VALUE(@Json, '$.pageSize')),
@@ -32,7 +32,7 @@ BEGIN
             DECLARE @TotalCount INT;
             SELECT @TotalCount = COUNT(1)
             FROM [Jobs].[JobPosts] p INNER JOIN [Jobs].[JobCategories] c ON c.Id = p.CategoryId
-            WHERE (@UserId IS NOT NULL OR (p.Status = 'Published' AND (p.ApplicationDeadline IS NULL OR p.ApplicationDeadline >= CAST(GETDATE() AS DATE))))
+            WHERE (@Mode = 1 OR (p.Status = 'Published' AND (p.ApplicationDeadline IS NULL OR p.ApplicationDeadline >= CAST(GETDATE() AS DATE))))
               AND (@CategoryId IS NULL OR p.CategoryId = @CategoryId)
               AND (@Search IS NULL OR p.Title LIKE '%' + @Search + '%' OR p.Department LIKE '%' + @Search + '%' OR c.Name LIKE '%' + @Search + '%' OR p.Location LIKE '%' + @Search + '%');
 
@@ -51,7 +51,7 @@ BEGIN
                         p.MetaDescription AS metaDescription, p.MetaKeywords AS metaKeywords,
                         p.CreatedOn AS createdOn
                      FROM [Jobs].[JobPosts] p INNER JOIN [Jobs].[JobCategories] c ON c.Id = p.CategoryId
-                     WHERE (@UserId IS NOT NULL OR (p.Status = 'Published' AND (p.ApplicationDeadline IS NULL OR p.ApplicationDeadline >= CAST(GETDATE() AS DATE))))
+                     WHERE (@Mode = 1 OR (p.Status = 'Published' AND (p.ApplicationDeadline IS NULL OR p.ApplicationDeadline >= CAST(GETDATE() AS DATE))))
                        AND (@CategoryId IS NULL OR p.CategoryId = @CategoryId)
                        AND (@Search IS NULL OR p.Title LIKE '%' + @Search + '%' OR p.Department LIKE '%' + @Search + '%' OR c.Name LIKE '%' + @Search + '%' OR p.Location LIKE '%' + @Search + '%')
                      ORDER BY p.IsFeatured DESC, COALESCE(p.ApplicationDeadline, CONVERT(DATE,'99991231')) ASC, p.CreatedOn DESC

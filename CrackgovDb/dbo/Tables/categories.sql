@@ -11,13 +11,13 @@
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_categories_parent_id]
-    ON [dbo].[categories]([parent_id] ASC)
-    INCLUDE([id], [name], [category_type], [franchise_id]);
-
-
-GO
 CREATE NONCLUSTERED INDEX [IX_categories_franchise_id]
     ON [dbo].[categories]([franchise_id] ASC)
     INCLUDE([id], [name], [parent_id], [category_type]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_categories_parent_id]
+    ON [dbo].[categories]([parent_id] ASC)
+    INCLUDE([id], [name], [category_type], [franchise_id]);
 

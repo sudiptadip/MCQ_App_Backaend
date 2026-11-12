@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[SpExamCategories]
+﻿CREATE PROCEDURE [dbo].[SpExamCategories]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,
@@ -211,4 +211,3 @@ BEGIN
         SET @Output = (SELECT 500 AS StatusCode, 0 AS IsSuccess, 'Unable to process ExamCategories request.' AS [Message] FOR JSON PATH, WITHOUT_ARRAY_WRAPPER);
     END CATCH;
 END;
-GO

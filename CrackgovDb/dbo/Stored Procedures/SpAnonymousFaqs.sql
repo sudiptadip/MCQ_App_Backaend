@@ -1,6 +1,8 @@
-CREATE PROCEDURE [dbo].[SpAnonymousFaqs]
+﻿CREATE PROCEDURE [dbo].[SpAnonymousFaqs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
+    @UserId INT = NULL,
+    @FranchiseId INT = NULL,
     @Output NVARCHAR(MAX) OUTPUT
 AS
 BEGIN

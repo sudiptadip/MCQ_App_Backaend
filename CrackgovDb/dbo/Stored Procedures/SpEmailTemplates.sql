@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[SpEmailTemplates]
+﻿CREATE PROCEDURE [dbo].[SpEmailTemplates]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,
@@ -407,4 +407,3 @@ BEGIN
         );
     END CATCH;
 END;
-GO

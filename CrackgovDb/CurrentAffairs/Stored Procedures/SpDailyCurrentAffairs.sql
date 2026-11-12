@@ -1,4 +1,4 @@
-CREATE PROCEDURE [CurrentAffairs].[SpDailyCurrentAffairs]
+﻿CREATE PROCEDURE [CurrentAffairs].[SpDailyCurrentAffairs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,

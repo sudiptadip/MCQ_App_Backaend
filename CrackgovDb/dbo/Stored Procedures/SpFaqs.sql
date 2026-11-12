@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[SpFaqs]
+﻿CREATE PROCEDURE [dbo].[SpFaqs]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,
