@@ -1,4 +1,4 @@
-﻿using MCQAPP.Dto;
+using MCQAPP.Dto;
 using System.Threading.Tasks;
 
 namespace MCQAPP.Interface
@@ -7,6 +7,9 @@ namespace MCQAPP.Interface
     {
         Task<ApiResponse<string>> RegisterAsync(RegisterDTO dto);
         Task<ApiResponse<string>> RegisterStudent(RegisterStudentDTO dto);
+        Task<ApiResponse<object>> RegisterWebStudentAsync(RegisterWebStudentDTO dto);
+        Task<ApiResponse<string>> VerifyOtpAsync(VerifyOtpDTO dto);
+        Task<ApiResponse<string>> ResendOtpAsync(ResendOtpDTO dto);
         Task<ApiResponse<LoginResponseDTO>> LoginAsync(LoginDTO dto);
     }
 }

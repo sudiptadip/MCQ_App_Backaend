@@ -36,6 +36,28 @@ public partial class Franchise
     [Column("created_at")]
     public DateTime? CreatedAt { get; set; }
 
+    [Column("smtp_host")]
+    [StringLength(255)]
+    public string? SmtpHost { get; set; }
+
+    [Column("smtp_port")]
+    public int? SmtpPort { get; set; }
+
+    [Column("smtp_email")]
+    [StringLength(255)]
+    public string? SmtpEmail { get; set; }
+
+    [Column("smtp_password")]
+    [StringLength(500)]
+    public string? SmtpPassword { get; set; }
+
+    [Column("smtp_enable_ssl")]
+    public bool SmtpEnableSsl { get; set; } = true;
+
+    [Column("smtp_sender_name")]
+    [StringLength(255)]
+    public string? SmtpSenderName { get; set; }
+
     [InverseProperty("Franchise")]
     public virtual ICollection<FranchiseTest> FranchiseTests { get; set; } = new List<FranchiseTest>();
 

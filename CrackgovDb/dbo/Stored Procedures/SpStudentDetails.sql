@@ -55,9 +55,21 @@ BEGIN
                                     u.created_at,
                                     u.franchise_id,
                                     f.name AS franchise_name,
-                                  --  s.father_name,
+                                    s.parent_name,
+                                    s.mobile_no,
                                     s.mobile_no AS phone,
+                                    s.alternate_mobile_no,
+                                    s.gender,
+                                    s.date_of_birth,
                                     s.address_line1,
+                                    s.address_line2,
+                                    s.city,
+                                    s.state,
+                                    s.country,
+                                    s.postal_code,
+                                    s.profile_image_url,
+                                    s.status,
+                                    s.ValidityDate,
                                     CASE WHEN u.device_fingerprint IS NOT NULL AND LEN(u.device_fingerprint) > 0 THEN 1 ELSE 0 END AS is_device_locked
                                 FROM [dbo].[users] u WITH (NOLOCK)
                                 LEFT JOIN [dbo].[students] s WITH (NOLOCK) ON u.id = s.user_id

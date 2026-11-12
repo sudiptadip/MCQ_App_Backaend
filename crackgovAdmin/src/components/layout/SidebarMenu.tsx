@@ -18,6 +18,8 @@ import {
   CalendarDays,
   MessageSquareQuote,
   Mail,
+  Sparkles,
+  Layers,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { ROLES, STORAGE_KEYS } from "../../constants";
@@ -29,6 +31,8 @@ const { SUPER_ADMIN, STUDENT, FRANCHISE_ADMIN } = ROLES;
 // Define the nav items outside the component
 export const navItems = [
   { icon: <LayoutDashboard size={20} />, label: "Dashboard", path: "/", roles: [SUPER_ADMIN, FRANCHISE_ADMIN, STUDENT] },
+  { icon: <Sparkles size={20} />, label: "Hero Banner", path: "/hero", roles: [SUPER_ADMIN] },
+  { icon: <Layers size={20} />, label: "Exam Categories", path: "/exam-categories", roles: [SUPER_ADMIN] },
   { icon: <ContactRound size={20} />, label: "Franchise", path: "/franchise", roles: [SUPER_ADMIN] },
   { icon: <Users size={20} />, label: "Student", path: "/student", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <IndianRupee size={20} />, label: "Fees Management", path: "/fees", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
@@ -42,6 +46,7 @@ export const navItems = [
   { icon: <HelpCircle size={20} />, label: "FAQs Management", path: "/faqs", roles: [SUPER_ADMIN] },
   { icon: <MessageSquareQuote size={20} />, label: "Testimonials", path: "/testimonials", roles: [SUPER_ADMIN] },
   { icon: <Mail size={20} />, label: "Contact Inquiries", path: "/contact-inquiries", roles: [SUPER_ADMIN] },
+  { icon: <Mail size={20} />, label: "Email Templates", path: "/email-templates", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <ClipboardCheck size={20} />, label: "Tests", path: "/test", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <Monitor size={20} />, label: "Display Views", path: "/display-view", roles: [SUPER_ADMIN, FRANCHISE_ADMIN] },
   { icon: <GraduationCap size={20} />, label: "Practice", path: "/practice", roles: [SUPER_ADMIN, FRANCHISE_ADMIN, STUDENT] },

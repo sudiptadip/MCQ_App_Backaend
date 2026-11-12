@@ -1,4 +1,4 @@
-﻿using MCQAPP.Data;
+using MCQAPP.Data;
 using MCQAPP.Dto;
 using MCQAPP.Interface;
 using MCQAPP.Utility;
@@ -31,7 +31,6 @@ namespace MCQAPP.Controllers
             return Ok(result);
         }
 
-
         [HttpPost("register-student")]
         [Authorize(Roles = $"{SD.ROLE_SUPER_ADMIN},{SD.ROLE_FRANCHISE_ADMIN}")]
         public async Task<IActionResult> RegisterStudent(RegisterStudentDTO dto)
@@ -44,10 +43,54 @@ namespace MCQAPP.Controllers
             return Ok(result);
         }
 
+        [HttpPost("register-web-student")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterWebStudent(RegisterWebStudentDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(dto);
+
+            var result = await _authService.RegisterWebStudentAsync(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("verify-otp")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyOtp(VerifyOtpDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(dto);
+
+            var result = await _authService.VerifyOtpAsync(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("resend-otp")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResendOtp(ResendOtpDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(dto);
+
+            var result = await _authService.ResendOtpAsync(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO dto)
         {
-            
             if(string.IsNullOrWhiteSpace(dto.Password) || string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.DeviceFingerprint))
             {
                 return BadRequest(ApiResponse<LoginResponseDTO>.Fail("Invalid email or password"));
@@ -60,6 +103,5 @@ namespace MCQAPP.Controllers
 
             return Ok(result);
         }
-
     }
 }

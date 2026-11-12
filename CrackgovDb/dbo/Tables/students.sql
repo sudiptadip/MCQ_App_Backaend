@@ -8,6 +8,7 @@
     [date_of_birth]       DATE           NULL,
     [mobile_no]           NVARCHAR (20)  NULL,
     [alternate_mobile_no] NVARCHAR (20)  NULL,
+    [parent_name]         NVARCHAR (255) NULL,
     [email]               NVARCHAR (255) NULL,
     [address_line1]       NVARCHAR (255) NULL,
     [address_line2]       NVARCHAR (255) NULL,

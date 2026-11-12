@@ -41,6 +41,7 @@ const studentDetailsSchema = z.object({
   date_of_birth: z.string().optional().nullable(),
   mobile_no: z.string().optional().nullable(),
   alternate_mobile_no: z.string().optional().nullable(),
+  parent_name: z.string().optional().nullable(),
   address_line1: z.string().optional().nullable(),
   address_line2: z.string().optional().nullable(),
   email: z.string().email("Invalid email address").optional().nullable().or(z.literal("")),
@@ -76,8 +77,9 @@ const StudentDetailsForm = ({ initialData, userId }: StudentDetailsFormProps) =>
       user_id: userId,
       gender: initialData?.gender || "",
       date_of_birth: initialData?.date_of_birth ? new Date(initialData.date_of_birth).toISOString().split('T')[0] : "",
-      mobile_no: initialData?.mobile_no || "",
+      mobile_no: initialData?.mobile_no || initialData?.phone || "",
       alternate_mobile_no: initialData?.alternate_mobile_no || "",
+      parent_name: initialData?.parent_name || initialData?.father_name || "",
       address_line1: initialData?.address_line1 || "",
       address_line2: initialData?.address_line2 || "",
       email: initialData?.email || "",
@@ -99,6 +101,7 @@ const StudentDetailsForm = ({ initialData, userId }: StudentDetailsFormProps) =>
       if (data.isSuccess) {
         showToast.success(data.message || "Student details updated successfully");
         queryClient.invalidateQueries({ queryKey: ["studentDetails", userId] });
+        queryClient.invalidateQueries({ queryKey: ["studentCompleteDetails", userId] });
         navigate("/student");
       } else {
         showToast.error(data.message || "Something went wrong");
@@ -168,6 +171,15 @@ const StudentDetailsForm = ({ initialData, userId }: StudentDetailsFormProps) =>
           <div>
             <h3 className="text-lg font-semibold mb-4 border-b pb-2">Personal Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="parent_name">Parent&apos;s Name</Label>
+                <Input
+                  id="parent_name"
+                  placeholder="Enter parent's name"
+                  {...register("parent_name")}
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="date_of_birth">Date of Birth</Label>
                 <Input

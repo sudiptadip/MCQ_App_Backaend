@@ -51,6 +51,10 @@ import UpsertFaqPage from "../pages/faqs/UpsertFaqPage";
 import TestimonialListPage from "../pages/testimonials/TestimonialListPage";
 import UpsertTestimonialPage from "../pages/testimonials/UpsertTestimonialPage";
 import ContactListPage from "../pages/contact/ContactListPage";
+import HeroAdminPage from "../pages/hero/HeroAdminPage";
+import ExamCategoriesPage from "../pages/exam-categories/ExamCategoriesPage";
+import EmailTemplateListPage from "../pages/email-templates/EmailTemplateListPage";
+import UpsertEmailTemplatePage from "../pages/email-templates/UpsertEmailTemplatePage";
 
 
 export const router = createBrowserRouter([
@@ -205,6 +209,14 @@ export const router = createBrowserRouter([
                         element: <AdminOnlyRoute />,
                         children: [
                             {
+                                path: "hero",
+                                element: <HeroAdminPage />
+                            },
+                            {
+                                path: "exam-categories",
+                                element: <ExamCategoriesPage />
+                            },
+                            {
                                 path: "jobs",
                                 children: [
                                     { index: true, element: <JobListPage /> },
@@ -248,6 +260,14 @@ export const router = createBrowserRouter([
                                 path: "contact-inquiries",
                                 element: <ContactListPage />
                             }
+                        ]
+                    },
+                    {
+                        path: "email-templates",
+                        children: [
+                            { index: true, element: <EmailTemplateListPage /> },
+                            { path: "create", element: <UpsertEmailTemplatePage /> },
+                            { path: "edit/:id", element: <UpsertEmailTemplatePage /> },
                         ]
                     },
                     {

@@ -151,6 +151,8 @@
     <Build Include="dbo\Stored Procedures\SpContactUs.sql" />
     <Build Include="dbo\Stored Procedures\SpAnonymousContactUs.sql" />
     <Build Include="dbo\Stored Procedures\SpDashboard.sql" />
+    <Build Include="dbo\Tables\EmailTemplates.sql" />
+    <Build Include="dbo\Stored Procedures\SpEmailTemplates.sql" />
     <Build Include="Security\demo2digiems_1.sql" />
     <Build Include="Security\digitaldaptos_1.sql" />
     <Build Include="Security\eDB_1.sql" />

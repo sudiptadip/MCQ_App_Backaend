@@ -42,6 +42,10 @@ public partial class Student
     [StringLength(20)]
     public string? AlternateMobileNo { get; set; }
 
+    [Column("parent_name")]
+    [StringLength(255)]
+    public string? ParentName { get; set; }
+
     [Column("email")]
     [StringLength(255)]
     public string? Email { get; set; }

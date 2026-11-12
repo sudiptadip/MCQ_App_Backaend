@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -41,6 +41,16 @@ public partial class User
     
     [Column("device_fingerprint")]
     public string? DeviceFingerprint { get; set; }
+
+    [Column("is_verified")]
+    public bool IsVerified { get; set; } = false;
+
+    [Column("otp")]
+    [StringLength(10)]
+    public string? Otp { get; set; }
+
+    [Column("otp_expiry")]
+    public DateTime? OtpExpiry { get; set; }
 
     [ForeignKey("FranchiseId")]
     [InverseProperty("Users")]

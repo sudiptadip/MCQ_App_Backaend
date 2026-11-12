@@ -166,14 +166,14 @@ export const StudentDetailsPage: React.FC = () => {
                 <span className="flex items-center gap-1.5">
                   <Mail size={14} className="text-indigo-400" /> {profile.email}
                 </span>
-                {profile.phone && (
+                {(profile.mobile_no || profile.phone) && (
                   <span className="flex items-center gap-1.5">
-                    <Phone size={14} className="text-indigo-400" /> {profile.phone}
+                    <Phone size={14} className="text-indigo-400" /> {profile.mobile_no || profile.phone}
                   </span>
                 )}
-                {profile.father_name && (
+                {(profile.parent_name || profile.father_name) && (
                   <span className="flex items-center gap-1.5">
-                    <User size={14} className="text-indigo-400" /> Father: {profile.father_name}
+                    <User size={14} className="text-indigo-400" /> Parent: {profile.parent_name || profile.father_name}
                   </span>
                 )}
                 {profile.created_at && (
@@ -574,7 +574,7 @@ export const StudentDetailsPage: React.FC = () => {
             <CardTitle className="text-2xl font-black flex items-center gap-2">
               <User className="text-primary" /> Edit Personal Profile Details
             </CardTitle>
-            <CardDescription>Update student contact info, father's name, or address.</CardDescription>
+            <CardDescription>Update student contact info, parent's name, or address.</CardDescription>
           </CardHeader>
           <CardContent className="p-8">
             <StudentDetailsForm initialData={profile || undefined} userId={id} />

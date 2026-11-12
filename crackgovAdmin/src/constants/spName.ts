@@ -24,4 +24,7 @@ export const SP_NAME = {
     SP_FAQS: "SpFaqs",
     SP_TESTIMONIALS: "SpTestimonials",
     SP_CONTACT_US: "SpContactUs",
+    SP_HERO_SECTION: "SpHeroSection",
+    SP_EXAM_CATEGORIES: "SpExamCategories",
+    SP_EMAIL_TEMPLATES: "SpEmailTemplates",
 };

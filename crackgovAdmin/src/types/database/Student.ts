@@ -6,6 +6,7 @@ export interface Student {
     date_of_birth?: string | null;
     mobile_no?: string | null;
     alternate_mobile_no?: string | null;
+    parent_name?: string | null;
     address_line1?: string | null;
     address_line2?: string | null;
     email?: string | null;

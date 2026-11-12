@@ -15,6 +15,17 @@ import { showToast } from "../../../utils/toast";
 const studentSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
+  mobileNo: z
+    .string()
+    .trim()
+    .min(10, "Mobile number must be at least 10 digits")
+    .max(20, "Mobile number must not exceed 20 characters")
+    .regex(/^[0-9+\-\s()]+$/, "Invalid mobile number"),
+  parentName: z
+    .string()
+    .trim()
+    .min(2, "Parent's name must be at least 2 characters")
+    .max(255, "Parent's name must not exceed 255 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -38,6 +49,8 @@ const StudentForm = () => {
     defaultValues: {
       name: "",
       email: "",
+      mobileNo: "",
+      parentName: "",
       password: "",
       confirmPassword: "",
     },
@@ -107,6 +120,33 @@ const StudentForm = () => {
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+
+            {/* Mobile Number */}
+            <div className="space-y-2">
+              <Label htmlFor="mobileNo">Mobile Number</Label>
+              <Input
+                id="mobileNo"
+                type="tel"
+                placeholder="Enter mobile number"
+                {...register("mobileNo")}
+              />
+              {errors.mobileNo && (
+                <p className="text-sm text-red-500">{errors.mobileNo.message}</p>
+              )}
+            </div>
+
+            {/* Parent's Name */}
+            <div className="space-y-2">
+              <Label htmlFor="parentName">Parent&apos;s Name</Label>
+              <Input
+                id="parentName"
+                placeholder="Enter parent's name"
+                {...register("parentName")}
+              />
+              {errors.parentName && (
+                <p className="text-sm text-red-500">{errors.parentName.message}</p>
               )}
             </div>
 
