@@ -39,6 +39,9 @@ export default interface Franchise {
   // Status
   status?: boolean | null;
 
+  // Saved Franchise Admin Password (visible to Super Admin)
+  admin_password?: string | null;
+
   // Audit
   created_at?: string | null;
 

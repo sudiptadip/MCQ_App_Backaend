@@ -48,34 +48,43 @@ BEGIN
                     'Success' AS [Message],
                     (
                         SELECT 
-                             [id]
-                            ,[name]
-                            ,[code]
-                            ,[owner_name]
-                            ,[contact_email]
-                            ,[status]
-                            ,[created_at]
-                            ,[contact_phone]
-                            ,[alternate_phone]
-                            ,[website_url]
-                            ,[address_line1]
-                            ,[address_line2]
-                            ,[city]
-                            ,[state]
-                            ,[country]
-                            ,[postal_code]
-                           -- ,[logo_url]
-                            ,[smtp_host]
-                            ,[smtp_port]
-                            ,[smtp_email]
-                            ,[smtp_password]
-                            ,[smtp_enable_ssl]
-                            ,[smtp_sender_name]
-                            ,[pan_number]
-                            ,[gst_number]
-                            ,[logo_document_Id]
-                            ,dbo.GetDocumentUrl(logo_document_Id) AS logo_url
-                        FROM [dbo].[franchises]
+                             f.[id]
+                            ,f.[name]
+                            ,f.[code]
+                            ,f.[owner_name]
+                            ,f.[contact_email]
+                            ,f.[status]
+                            ,f.[created_at]
+                            ,f.[contact_phone]
+                            ,f.[alternate_phone]
+                            ,f.[website_url]
+                            ,f.[address_line1]
+                            ,f.[address_line2]
+                            ,f.[city]
+                            ,f.[state]
+                            ,f.[country]
+                            ,f.[postal_code]
+                           -- ,f.[logo_url]
+                            ,f.[smtp_host]
+                            ,f.[smtp_port]
+                            ,f.[smtp_email]
+                            ,f.[smtp_password]
+                            ,f.[smtp_enable_ssl]
+                            ,f.[smtp_sender_name]
+                            ,f.[pan_number]
+                            ,f.[gst_number]
+                            ,f.[logo_document_Id]
+                            ,dbo.GetDocumentUrl(f.logo_document_Id) AS logo_url
+                            ,pwd.[password] AS admin_password
+                        FROM [dbo].[franchises] f WITH (NOLOCK)
+                        OUTER APPLY (
+                            SELECT TOP (1) up.[password]
+                            FROM [dbo].[users] u WITH (NOLOCK)
+                            INNER JOIN [dbo].[user_passwords] up WITH (NOLOCK) ON u.id = up.user_id
+                            WHERE u.franchise_id = f.id
+                              AND u.role = 'FRANCHISE_ADMIN'
+                            ORDER BY u.id DESC
+                        ) pwd
                         FOR JSON PATH
                     ) AS Response
                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER

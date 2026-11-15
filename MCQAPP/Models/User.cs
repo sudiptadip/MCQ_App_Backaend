@@ -64,4 +64,7 @@ public partial class User
 
     [InverseProperty("CreatedByNavigation")]
     public virtual ICollection<Test> Tests { get; set; } = new List<Test>();
+
+    [InverseProperty("User")]
+    public virtual UserPassword? UserPassword { get; set; }
 }

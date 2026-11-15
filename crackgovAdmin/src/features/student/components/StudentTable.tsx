@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import ActionButton from '../../franchise/components/ActionButton';
 import { Eye, Plus, Smartphone, BookOpen } from 'lucide-react';
 import { DataTable, type ColumnDef } from '../../../components/ui/DataTable';
-import type { User as Student } from '../../../types/database/User';
-import { getStudents, resetUserDevice } from '../api/student.api';
+import { PasswordCell } from '../../../components/ui/PasswordCell';
+import { getStudents, resetUserDevice, type StudentListItem } from '../api/student.api';
 import AssignCategoryModal from './AssignCategoryModal';
 import Error from '../../../components/common/Error';
 import { showToast } from '../../../utils/toast';
@@ -38,7 +38,7 @@ const StudentTable = () => {
         setResetDeviceUserId(userId);
     };
 
-    const columns: ColumnDef<Student>[] = [
+    const columns: ColumnDef<StudentListItem>[] = [
         {
             accessorKey: "id",
             header: "#",
@@ -48,6 +48,27 @@ const StudentTable = () => {
         {
             accessorKey: "name",
             header: "Student Name",
+        },
+        {
+            accessorKey: "parent_name",
+            header: "Parent Name",
+            cell: ({ getValue }) => getValue<string | null>() || "-",
+        },
+        {
+            accessorKey: "mobile_no",
+            header: "Mobile Number",
+            cell: ({ getValue }) => {
+                const mobile = getValue<string | null>();
+                return mobile ? (
+                    <a
+                        href={`tel:${mobile}`}
+                        className="text-primary underline-offset-2 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {mobile}
+                    </a>
+                ) : "-";
+            },
         },
         {
             accessorKey: "email",
@@ -61,6 +82,12 @@ const StudentTable = () => {
                     {getValue<string>()}
                 </a>
             ),
+        },
+        {
+            accessorKey: "password",
+            header: "Password",
+            enableSorting: false,
+            cell: ({ getValue }) => <PasswordCell password={getValue<string | null>()} />,
         },
         {
             accessorKey: "created_at",
@@ -134,7 +161,7 @@ const StudentTable = () => {
                 description="List of all registered students."
                 enableSorting
                 enableSearch
-                searchPlaceholder="Search student name or email..."
+                searchPlaceholder="Search student name, parent, mobile or email..."
                 enablePagination
                 defaultPageSize={10}
                 enableExcelExport

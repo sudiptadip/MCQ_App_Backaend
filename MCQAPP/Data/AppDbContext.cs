@@ -38,6 +38,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserPassword> UserPasswords { get; set; }
+
     public virtual DbSet<Document> Documents { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -180,6 +182,15 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
             entity.HasOne(d => d.Franchise).WithMany(p => p.Users).HasConstraintName("FK_users_franchise");
+        });
+
+        modelBuilder.Entity<UserPassword>(entity =>
+        {
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.User).WithOne(p => p.UserPassword)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_user_passwords_user");
         });
 
         modelBuilder.Entity<Document>(entity =>

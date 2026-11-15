@@ -42,8 +42,15 @@ BEGIN
                     1 AS IsSuccess,
                     'Success 1' AS [Message],
                     (
-                        SELECT *
-                        FROM [dbo].[users] where franchise_id = @FranchiseId and role = 'student'
+                        SELECT
+                            u.*,
+                            s.mobile_no,
+                            s.parent_name,
+                            up.[password]
+                        FROM [dbo].[users] u WITH (NOLOCK)
+                        LEFT JOIN [dbo].[students] s WITH (NOLOCK) ON u.id = s.user_id
+                        LEFT JOIN [dbo].[user_passwords] up WITH (NOLOCK) ON u.id = up.user_id
+                        WHERE u.franchise_id = @FranchiseId AND u.role = 'student'
                         FOR JSON PATH
                     ) AS Response
                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
@@ -147,9 +154,14 @@ BEGIN
                     1 AS IsSuccess,
                     'Success 1' AS [Message],
                     (
-                        SELECT *
-                        FROM [dbo].[students] where franchise_id = @FranchiseId 
-                        and [user_id] = @user_id
+                        SELECT
+                            s.*,
+                            CASE WHEN u.role IN ('STUDENT', 'WEB_STUDENT') THEN up.[password] ELSE NULL END AS [password]
+                        FROM [dbo].[students] s WITH (NOLOCK)
+                        LEFT JOIN [dbo].[users] u WITH (NOLOCK) ON s.user_id = u.id
+                        LEFT JOIN [dbo].[user_passwords] up WITH (NOLOCK) ON u.id = up.user_id
+                        WHERE s.franchise_id = @FranchiseId
+                        AND s.[user_id] = @user_id
                         FOR JSON PATH
                     ) AS Response
                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER

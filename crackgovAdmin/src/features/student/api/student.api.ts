@@ -11,10 +11,16 @@ export interface StudentCategory extends Category {
   is_assigned: boolean;
 }
 
-export const getStudents = async (): Promise<Student[]> => {
+export interface StudentListItem extends Student {
+  mobile_no?: string | null;
+  parent_name?: string | null;
+  password?: string | null;
+}
+
+export const getStudents = async (): Promise<StudentListItem[]> => {
   const response = await api.post(API_ROUTES.GET_STUDENT_LIST, {});
   if (response.data.isSuccess) {
-    return (response.data.data as Student[]) || [];
+    return (response.data.data as StudentListItem[]) || [];
   }
   throw new Error(response.data.message || "Failed to fetch students");
 };
@@ -73,6 +79,7 @@ export interface StudentCompleteDetailsData {
     created_at?: string;
     franchise_id?: number;
     franchise_name?: string;
+    password?: string | null;
     parent_name?: string | null;
     father_name?: string | null;
     mobile_no?: string | null;

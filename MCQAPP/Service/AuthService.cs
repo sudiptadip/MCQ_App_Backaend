@@ -90,10 +90,26 @@ namespace MCQAPP.Service
                 };
             }
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
 
-            return ApiResponse<string>.Success(null!, "User registered successfully");
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                if (user.Role != SD.ROLE_SUPER_ADMIN)
+                {
+                    await UpsertUserPasswordAsync(user.Id, dto.Password);
+                }
+
+                await transaction.CommitAsync();
+                return ApiResponse<string>.Success(null!, "User registered successfully");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return ApiResponse<string>.Fail("Failed to register user: " + ex.Message);
+            }
         }
 
         public async Task<ApiResponse<object>> RegisterWebStudentAsync(RegisterWebStudentDTO dto)
@@ -124,6 +140,10 @@ namespace MCQAPP.Service
 
                         _context.Users.Update(existingUser);
                         await _context.SaveChangesAsync();
+                        if (existingUser.Role != SD.ROLE_SUPER_ADMIN)
+                        {
+                            await UpsertUserPasswordAsync(existingUser.Id, dto.Password);
+                        }
                         await transaction.CommitAsync();
 
                         // Send OTP Email via SMTP for Franchise 1
@@ -160,6 +180,7 @@ namespace MCQAPP.Service
 
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
+                await UpsertUserPasswordAsync(user.Id, dto.Password);
 
                 string enrollmentNo = "WEB-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")
                                       + new Random().Next(100, 999);
@@ -330,6 +351,33 @@ namespace MCQAPP.Service
             );
         }
 
+        private async Task UpsertUserPasswordAsync(int userId, string password)
+        {
+            if (string.IsNullOrEmpty(password))
+                return;
+
+            var existingPassword = await _context.UserPasswords
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (existingPassword != null)
+            {
+                existingPassword.Password = password;
+                existingPassword.UpdatedAt = DateTime.UtcNow;
+                _context.UserPasswords.Update(existingPassword);
+            }
+            else
+            {
+                await _context.UserPasswords.AddAsync(new UserPassword
+                {
+                    UserId = userId,
+                    Password = password,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<ApiResponse<string>> RegisterStudent(RegisterStudentDTO dto)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -376,6 +424,7 @@ namespace MCQAPP.Service
 
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
+                await UpsertUserPasswordAsync(user.Id, dto.Password);
 
                 string enrollmentNo = "STU-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")
                                       + new Random().Next(100, 999);

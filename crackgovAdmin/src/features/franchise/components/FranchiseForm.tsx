@@ -525,8 +525,37 @@ const FranchiseForm = ({ initialData }: FranchiseFormProps) => {
             </div>
           </div>
 
-          {/* Authentication (Only on Create) */}
-          {!isEditMode && (
+          {/* Authentication (Create) or Saved Admin Password (Edit) */}
+          {isEditMode ? (
+            <div>
+              <h3 className="text-lg font-semibold mb-4 border-b pb-2">
+                Franchise Admin Credentials
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="saved_admin_password">Admin Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="saved_admin_password"
+                      type={showPassword ? "text" : "password"}
+                      value={initialData?.admin_password || ""}
+                      placeholder="Not saved yet"
+                      readOnly
+                    />
+                    {initialData?.admin_password && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-2.5 text-muted-foreground"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
             <div>
               <h3 className="text-lg font-semibold mb-4 border-b pb-2">
                 Authentication

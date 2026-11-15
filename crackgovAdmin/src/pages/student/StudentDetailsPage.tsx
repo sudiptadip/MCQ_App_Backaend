@@ -27,9 +27,11 @@ import {
   Loader2,
   Trophy,
   LayoutGrid,
-  Phone
+  Phone,
+  KeyRound
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { PasswordCell } from '../../components/ui/PasswordCell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import type { StudentFee, PaymentReportItem } from '../../features/fees/types';
 
@@ -174,6 +176,13 @@ export const StudentDetailsPage: React.FC = () => {
                 {(profile.parent_name || profile.father_name) && (
                   <span className="flex items-center gap-1.5">
                     <User size={14} className="text-indigo-400" /> Parent: {profile.parent_name || profile.father_name}
+                  </span>
+                )}
+                {profile.password && (
+                  <span className="flex items-center gap-1.5">
+                    <KeyRound size={14} className="text-indigo-400" />
+                    <span>Password:</span>
+                    <PasswordCell password={profile.password} className="text-indigo-100" />
                   </span>
                 )}
                 {profile.created_at && (

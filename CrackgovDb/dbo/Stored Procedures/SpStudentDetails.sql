@@ -55,6 +55,7 @@ BEGIN
                                     u.created_at,
                                     u.franchise_id,
                                     f.name AS franchise_name,
+                                    CASE WHEN u.role IN ('STUDENT', 'WEB_STUDENT') THEN up.[password] ELSE NULL END AS [password],
                                     s.parent_name,
                                     s.mobile_no,
                                     s.mobile_no AS phone,
@@ -74,6 +75,7 @@ BEGIN
                                 FROM [dbo].[users] u WITH (NOLOCK)
                                 LEFT JOIN [dbo].[students] s WITH (NOLOCK) ON u.id = s.user_id
                                 LEFT JOIN [dbo].[franchises] f WITH (NOLOCK) ON u.franchise_id = f.id
+                                LEFT JOIN [dbo].[user_passwords] up WITH (NOLOCK) ON u.id = up.user_id
                                 WHERE u.id = @TargetUserId
                                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
                             ) AS student_profile,

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ActionButton from './ActionButton';
 import { Eye, Pencil, Plus, Trash2, BookOpen } from 'lucide-react';
 import { DataTable, type ColumnDef } from '../../../components/ui/DataTable';
+import { PasswordCell } from '../../../components/ui/PasswordCell';
 import type Franchise from '../../../types/database/Franchise';
 import { STATUS_STYLES } from '../../../constants/cssStyles';
 import { getFranchises } from '../api/franchise.api';
@@ -41,6 +42,12 @@ const FranchiseTable = () => {
                     {getValue<string>()}
                 </a>
             ),
+        },
+        {
+            accessorKey: "admin_password",
+            header: "Admin Password",
+            enableSorting: false,
+            cell: ({ getValue }) => <PasswordCell password={getValue<string | null>()} />,
         },
         {
             accessorKey: "status",

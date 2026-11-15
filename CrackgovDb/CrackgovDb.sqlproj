@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\users.sql" />
+    <Build Include="dbo\Tables\user_passwords.sql" />
     <Build Include="dbo\Tables\tests.sql" />
     <Build Include="dbo\Tables\Testimonials.sql" />
     <Build Include="dbo\Tables\test_questions.sql" />
