@@ -8,14 +8,41 @@ interface FaqSectionProps {
   initialFaqs?: FaqItem[];
 }
 
+const DEFAULT_FAQS: FaqItem[] = [
+  {
+    id: 1,
+    question: "How do I start preparing for government exams with CrackGov?",
+    answer: "You can start by exploring our Practice section for topic-wise tests and full-length mock exams. Stay updated with daily Current Affairs and track the latest job notifications on the Career Board.",
+    category: "General",
+    displayOrder: 1,
+  },
+  {
+    id: 2,
+    question: "Are mock tests and practice quizzes updated according to current exam patterns?",
+    answer: "Yes, our test series and question banks are continuously updated to align with the latest syllabus and patterns of SSC, Railway, Banking, and State civil service exams.",
+    category: "Practice & Tests",
+    displayOrder: 2,
+  },
+  {
+    id: 3,
+    question: "How frequently are new job notifications published?",
+    answer: "Our career board is updated daily with verified government job notifications, official notification PDFs, application links, eligibility criteria, and important deadlines.",
+    category: "Job Alerts",
+    displayOrder: 3,
+  },
+  {
+    id: 4,
+    question: "Can I access CrackGov resources on mobile devices?",
+    answer: "Yes! CrackGov is fully responsive and optimized for seamless practice on smartphones, tablets, and desktop browsers.",
+    category: "General",
+    displayOrder: 4,
+  },
+];
+
 export function FaqSection({ initialFaqs = [] }: FaqSectionProps) {
-  const faqs = initialFaqs;
+  const faqs = initialFaqs && initialFaqs.length > 0 ? initialFaqs : DEFAULT_FAQS;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-
-  if (!faqs || faqs.length === 0) {
-    return null;
-  }
 
   const categories = ["All", ...Array.from(new Set(faqs.map((f) => f.category || "General")))];
 
@@ -116,7 +143,7 @@ export function FaqSection({ initialFaqs = [] }: FaqSectionProps) {
           </div>
         </div>
         <a
-          href="mailto:support@crackgov.com"
+          href="mailto:upgradeclasses1989@gmail.com"
           className="inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shrink-0"
         >
           Contact Support

@@ -52,7 +52,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ paymentId, onClose }
                     {receipt.franchise_name || 'MCQ Academy'}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {receipt.franchise_email || 'contact@academy.com'} • {receipt.franchise_phone || '+91 98765 43210'}
+                    {receipt.franchise_email || 'upgradeclasses1989@gmail.com'} • {receipt.franchise_phone || '+91 98319 67172'}
                   </p>
                 </div>
                 <div className="text-right">

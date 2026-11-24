@@ -1,6 +1,10 @@
 import { getDeviceFingerprint } from './fingerprint';
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5207';
+if (typeof window === "undefined" && process.env.NODE_ENV !== "production") {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+}
+
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5207').trim();
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const url = `${API_URL}${endpoint}`;

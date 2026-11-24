@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[SpAnonymousTestimonials]
     @Mode INT,
+    @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,
     @FranchiseId INT = NULL,
-    @Json NVARCHAR(MAX) = NULL,
     @Output NVARCHAR(MAX) OUTPUT
 AS
 BEGIN

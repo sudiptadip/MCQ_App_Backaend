@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { fetchApi } from "@/lib/api";
 import { getDeviceFingerprint } from "@/lib/fingerprint";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: yupResolver(loginSchema),
@@ -95,8 +97,16 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {error && (
-              <div className="p-3 text-sm text-red-500 bg-red-100/10 rounded-md border border-red-500/20">
-                {error}
+              <div className="p-3 text-sm text-red-500 bg-red-100/10 rounded-md border border-red-500/20 space-y-1.5">
+                <div>{error}</div>
+                {(error.toLowerCase().includes("verified") || error.toLowerCase().includes("otp")) && (
+                  <Link
+                    href={`/signup?email=${encodeURIComponent(getValues("email") || "")}&step=otp`}
+                    className="inline-block text-xs font-bold text-primary underline"
+                  >
+                    Click here to enter your verification OTP →
+                  </Link>
+                )}
               </div>
             )}
             <div className="space-y-2">
@@ -131,8 +141,14 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4 text-center text-sm text-muted-foreground">
+        <CardFooter className="flex flex-col space-y-3 text-center text-xs text-muted-foreground border-t pt-4">
           <p>
+            Don't have an account?{" "}
+            <Link href="/signup" className="text-primary font-bold hover:underline">
+              Sign up as a Student
+            </Link>
+          </p>
+          <p className="text-[11px] text-muted-foreground/80">
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </p>
         </CardFooter>

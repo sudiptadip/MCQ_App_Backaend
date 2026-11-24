@@ -34,18 +34,41 @@ export default function AboutPage() {
   return (
     <main className="flex-1">
       {/* Hero Banner */}
-      <section className="relative border-b bg-gradient-to-br from-primary/10 via-background to-sky-500/10 py-16 sm:py-24 overflow-hidden">
+      <section className="relative border-b bg-gradient-to-br from-primary/10 via-background to-sky-500/10 py-16 sm:py-20 overflow-hidden">
         <div className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-primary/10 blur-3xl" />
-        <div className="container mx-auto px-4 text-center max-w-4xl relative">
-          <span className="inline-flex items-center gap-2 rounded-full border bg-background/80 px-4 py-1.5 text-xs font-bold text-primary shadow-xs">
-            <Sparkles size={14} /> Empowering Aspirants Across India
-          </span>
-          <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-6xl text-foreground">
-            About <span className="text-primary">CrackGov</span>
-          </h1>
-          <p className="mt-5 text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            CrackGov is a modern, student-centric platform designed to simplify government exam preparation while keeping aspirants informed about real public-sector career opportunities.
-          </p>
+        <div className="container mx-auto px-4 max-w-6xl relative">
+          <div className="text-center max-w-3xl mx-auto">
+            <span className="inline-flex items-center gap-2 rounded-full border bg-background/80 px-4 py-1.5 text-xs font-bold text-primary shadow-xs">
+              <Sparkles size={14} /> Empowering Aspirants Across India
+            </span>
+            <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-6xl text-foreground">
+              About <span className="text-primary">CrackGov</span>
+            </h1>
+            <p className="mt-5 text-lg sm:text-xl text-muted-foreground leading-relaxed">
+              CrackGov is a modern, student-centric platform designed to simplify government exam preparation while keeping aspirants informed about real public-sector career opportunities.
+            </p>
+          </div>
+
+          {/* Featured Image */}
+          <div className="mt-12 overflow-hidden rounded-3xl border border-border/70 bg-card shadow-2xl shadow-primary/10">
+            <div className="relative aspect-[21/9] sm:aspect-[16/7] w-full overflow-hidden">
+              <img
+                src="/about-hero.jpg"
+                alt="Students studying and preparing for competitive government examinations"
+                className="h-full w-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex items-end p-6 sm:p-10">
+                <div className="text-white max-w-2xl">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground mb-3">
+                    <GraduationCap size={14} /> Quality Education & Guidance
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-bold leading-tight">
+                    Dedicated coaching, rigorous test practice, and career alerts to achieve your goals.
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

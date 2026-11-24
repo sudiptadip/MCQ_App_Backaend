@@ -9,7 +9,6 @@ import {
   Menu,
   X,
   BookOpen,
-  GraduationCap,
   Briefcase,
   FileText,
   Video,
@@ -28,7 +27,6 @@ import {
 const NAV_ITEMS = [
   { href: "/", label: "Home", icon: Home },
   { href: "/practice", label: "Practice", icon: BookOpen },
-  { href: "/courses", label: "Courses", icon: GraduationCap },
   { href: "/notes", label: "Notes & PDFs", icon: FileText },
   { href: "/videos", label: "Video Classes", icon: Video },
   { href: "/jobs", label: "Jobs", icon: Briefcase },
@@ -168,12 +166,20 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
-              className={buttonVariants({ variant: "default", size: "sm" })}
-            >
-              Login
-            </Link>
+            <div className="flex items-center space-x-2">
+              <Link
+                href="/login"
+                className={buttonVariants({ variant: "ghost", size: "sm" })}
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className={buttonVariants({ variant: "default", size: "sm" })}
+              >
+                Sign Up
+              </Link>
+            </div>
           )}
 
           {/* Mobile Menu Toggle Button */}
@@ -195,7 +201,7 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t bg-background/98 backdrop-blur-md px-4 pt-3 pb-6 space-y-3 shadow-lg animate-in slide-in-from-top-2 duration-200">
           {/* User Info on Mobile */}
-          {user && (
+          {user ? (
             <div className="flex items-center justify-between p-3 rounded-lg bg-accent/50 mb-2 border">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
@@ -219,6 +225,21 @@ export function Header() {
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Logout</span>
               </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <Link
+                href="/login"
+                className={`${buttonVariants({ variant: "outline", size: "sm" })} w-full justify-center`}
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className={`${buttonVariants({ variant: "default", size: "sm" })} w-full justify-center`}
+              >
+                Sign Up
+              </Link>
             </div>
           )}
 

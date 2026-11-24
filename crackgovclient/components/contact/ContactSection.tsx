@@ -73,8 +73,8 @@ export function ContactSection() {
                 <div>
                   <h4 className="font-bold text-sm text-foreground">Email Support</h4>
                   <p className="text-xs text-muted-foreground">Direct response for all academic & account queries.</p>
-                  <a href="mailto:support@crackgov.com" className="text-xs font-semibold text-primary hover:underline">
-                    support@crackgov.com
+                  <a href="mailto:upgradeclasses1989@gmail.com" className="text-xs font-semibold text-primary hover:underline">
+                    upgradeclasses1989@gmail.com
                   </a>
                 </div>
               </div>
@@ -86,7 +86,7 @@ export function ContactSection() {
                 <div>
                   <h4 className="font-bold text-sm text-foreground">Helpline & WhatsApp</h4>
                   <p className="text-xs text-muted-foreground">Available Mon - Sat, 9:00 AM - 7:00 PM</p>
-                  <span className="text-xs font-semibold text-foreground">+91 98765 43210</span>
+                  <span className="text-xs font-semibold text-foreground">+91 98319 67172</span>
                 </div>
               </div>
             </div>
@@ -145,7 +145,7 @@ export function ContactSection() {
                     required
                     value={contactInfo}
                     onChange={(e) => setContactInfo(e.target.value)}
-                    placeholder="e.g. rahul@gmail.com or 9876543210"
+                    placeholder="e.g. rahul@gmail.com or 9831967172"
                     className="w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   />
                 </div>

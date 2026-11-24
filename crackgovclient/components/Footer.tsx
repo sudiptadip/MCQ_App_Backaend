@@ -52,31 +52,26 @@ export function Footer() {
             <div className="space-y-2 text-xs text-slate-400 pt-2">
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href="mailto:support@crackgov.com" className="hover:text-white transition-colors">
-                  support@crackgov.com
+                <a href="mailto:upgradeclasses1989@gmail.com" className="hover:text-white transition-colors">
+                  upgradeclasses1989@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>+91 98765 43210 (Mon - Sat, 9 AM - 7 PM)</span>
+                <span>+91 98319 67172 (Mon - Sat, 9 AM - 7 PM)</span>
               </div>
             </div>
           </div>
 
-          {/* Column 1: Help & Support */}
+          {/* Column 1: Quick Links */}
           <div>
             <h4 className="text-sm font-bold text-white tracking-wider uppercase mb-4">
-              Help & Support
+              Quick Links
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/faqs" className="hover:text-amber-400 transition-colors">
-                  Frequently Asked Questions (FAQ)
-                </Link>
-              </li>
-              <li>
-                <Link href="/testimonials" className="hover:text-amber-400 transition-colors">
-                  Student Success Stories
+                <Link href="/about" className="hover:text-amber-400 transition-colors">
+                  About Us
                 </Link>
               </li>
               <li>
@@ -85,8 +80,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-amber-400 transition-colors">
-                  About CrackGov
+                <Link href="/faqs" className="hover:text-amber-400 transition-colors">
+                  Frequently Asked Questions (FAQ)
+                </Link>
+              </li>
+              <li>
+                <Link href="/testimonials" className="hover:text-amber-400 transition-colors">
+                  Student Success Stories
                 </Link>
               </li>
             </ul>

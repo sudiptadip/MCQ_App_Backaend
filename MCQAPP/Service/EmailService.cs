@@ -29,29 +29,44 @@ namespace MCQAPP.Service
                                 ?? await _context.Franchises.FirstOrDefaultAsync(f => f.Id == 1);
 
                 bool useFranchiseSmtp = franchise != null
+                    && !string.IsNullOrWhiteSpace(franchise.SmtpHost)
                     && !string.IsNullOrWhiteSpace(franchise.SmtpEmail)
-                    && !string.IsNullOrWhiteSpace(franchise.SmtpPassword);
+                    && !string.IsNullOrWhiteSpace(franchise.SmtpPassword)
+                    && franchise.SmtpPassword != "Admin@123";
 
-                string smtpHost = (useFranchiseSmtp && !string.IsNullOrWhiteSpace(franchise!.SmtpHost))
-                    ? franchise.SmtpHost!
-                    : (_configuration["SmtpSettings:Host"] ?? "smtp.gmail.com");
+                if (useFranchiseSmtp)
+                {
+                    int port = (franchise!.SmtpPort.HasValue && franchise.SmtpPort.Value > 0) ? franchise.SmtpPort.Value : 587;
+                    string sender = !string.IsNullOrWhiteSpace(franchise.SmtpSenderName)
+                        ? franchise.SmtpSenderName
+                        : (!string.IsNullOrWhiteSpace(franchise.Name) ? franchise.Name : "CrackGov Portal");
 
-                int smtpPort = (useFranchiseSmtp && franchise!.SmtpPort.HasValue && franchise.SmtpPort.Value > 0)
-                    ? franchise.SmtpPort.Value
-                    : int.Parse(_configuration["SmtpSettings:Port"] ?? "587");
+                    bool sent = await TrySendViaSmtpAsync(franchise.SmtpHost!, port, franchise.SmtpEmail!, franchise.SmtpPassword!, sender, toEmail, subject, bodyHtml);
+                    if (sent) return true;
 
-                string smtpEmail = useFranchiseSmtp
-                    ? franchise!.SmtpEmail!
-                    : (_configuration["SmtpSettings:Email"] ?? "drstrange9098304193@gmail.com");
+                    Console.WriteLine($"[MailKit Warning] Franchise SMTP failed for franchiseId={franchiseId}. Falling back to default system SMTP.");
+                }
 
-                string smtpPassword = useFranchiseSmtp
-                    ? franchise!.SmtpPassword!
-                    : (_configuration["SmtpSettings:Password"] ?? "odtoxjahfbqxiskv");
+                // Default system SMTP
+                string sysHost = _configuration["SmtpSettings:Host"] ?? "smtp.gmail.com";
+                int sysPort = int.Parse(_configuration["SmtpSettings:Port"] ?? "465");
+                string sysEmail = _configuration["SmtpSettings:Email"] ?? "drstrange9098304193@gmail.com";
+                string sysPassword = _configuration["SmtpSettings:Password"] ?? "odtoxjahfbqxiskv";
+                string sysSender = _configuration["SmtpSettings:SenderName"] ?? "CrackGov Portal";
 
-                string senderName = !string.IsNullOrWhiteSpace(franchise?.SmtpSenderName)
-                    ? franchise.SmtpSenderName
-                    : (!string.IsNullOrWhiteSpace(franchise?.Name) ? franchise.Name : (_configuration["SmtpSettings:SenderName"] ?? "CrackGov Portal"));
+                return await TrySendViaSmtpAsync(sysHost, sysPort, sysEmail, sysPassword, sysSender, toEmail, subject, bodyHtml);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[MailKit Error] Failed to send email to {toEmail}: {ex}");
+                return false;
+            }
+        }
 
+        private static async Task<bool> TrySendViaSmtpAsync(string smtpHost, int smtpPort, string smtpEmail, string smtpPassword, string senderName, string toEmail, string subject, string bodyHtml)
+        {
+            try
+            {
                 smtpHost = smtpHost.Trim();
                 smtpEmail = smtpEmail.Trim();
                 smtpPassword = smtpPassword.Replace(" ", "").Trim();
@@ -63,17 +78,14 @@ namespace MCQAPP.Service
                 message.To.Add(new MailboxAddress("", toEmail));
                 message.Subject = subject;
 
-                var bodyBuilder = new BodyBuilder
-                {
-                    HtmlBody = bodyHtml
-                };
+                var bodyBuilder = new BodyBuilder { HtmlBody = bodyHtml };
                 message.Body = bodyBuilder.ToMessageBody();
 
                 using var client = new SmtpClient();
 
                 // Select socket options based on port: 465 -> SslOnConnect, 587 -> StartTls, else Auto
-                SecureSocketOptions socketOptions = smtpPort == 465 
-                    ? SecureSocketOptions.SslOnConnect 
+                SecureSocketOptions socketOptions = smtpPort == 465
+                    ? SecureSocketOptions.SslOnConnect
                     : (smtpPort == 587 ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto);
 
                 await client.ConnectAsync(smtpHost, smtpPort, socketOptions);
@@ -86,7 +98,7 @@ namespace MCQAPP.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[MailKit Error] Failed to send email to {toEmail}: {ex}");
+                Console.WriteLine($"[MailKit Error] Failed sending to {toEmail} via {smtpHost}:{smtpPort} - {ex.Message}");
                 return false;
             }
         }

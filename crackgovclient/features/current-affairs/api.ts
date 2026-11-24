@@ -11,7 +11,15 @@ async function readResponse<T>(response: Response): Promise<T> {
 
 export async function getPublicCurrentAffairs(params: { page?: number; pageSize?: number; search?: string; category?: string; fromDate?: string; toDate?: string } = {}): Promise<DailyCurrentAffairsPageData> {
   const response = await fetch(`${API_ROOT}/anonymous/CurrentAffairs.SpAnonymousDailyCurrentAffairs/1`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(params), cache: "no-store" });
-  return readResponse<DailyCurrentAffairsPageData>(response);
+  const data = await readResponse<DailyCurrentAffairsPageData>(response);
+  return {
+    ...data,
+    items: data?.items ?? [],
+    categories: data?.categories ?? [],
+    totalCount: data?.totalCount ?? 0,
+    page: data?.page ?? 1,
+    pageSize: data?.pageSize ?? 10,
+  };
 }
 
 export async function getPublicCurrentAffair(slug: string): Promise<DailyCurrentAffair> {

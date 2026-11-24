@@ -28,8 +28,8 @@ export function Topbar() {
         <div className="hidden sm:flex items-center space-x-5 text-slate-300 shrink-0">
           <div className="flex items-center space-x-1.5 hover:text-white transition-colors">
             <Mail className="w-3.5 h-3.5 text-slate-400" />
-            <a href="mailto:support@crackgov.com" className="hover:underline">
-              support@crackgov.com
+            <a href="mailto:upgradeclasses1989@gmail.com" className="hover:underline">
+              upgradeclasses1989@gmail.com
             </a>
           </div>
           <span className="text-slate-700 dark:text-slate-700">|</span>

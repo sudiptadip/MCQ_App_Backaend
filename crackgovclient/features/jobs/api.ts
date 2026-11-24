@@ -24,7 +24,15 @@ export async function getPublicJobs(params: { page?: number; pageSize?: number; 
     body: JSON.stringify(params),
     cache: "no-store",
   });
-  return readResponse<PublicJobPage>(response);
+  const data = await readResponse<PublicJobPage>(response);
+  return {
+    ...data,
+    items: data?.items ?? [],
+    categories: data?.categories ?? [],
+    totalCount: data?.totalCount ?? 0,
+    page: data?.page ?? 1,
+    pageSize: data?.pageSize ?? 12,
+  };
 }
 
 export async function getPublicJobCategories(): Promise<{ id: number; name: string }[]> {

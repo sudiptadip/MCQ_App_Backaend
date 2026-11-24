@@ -11,7 +11,15 @@ async function readResponse<T>(response: Response): Promise<T> {
 
 export async function getPublicBlogs(params: { page?: number; pageSize?: number; search?: string; category?: string } = {}): Promise<BlogPageData> {
   const response = await fetch(`${API_ROOT}/anonymous/Blogs.SpAnonymousBlogs/1`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(params), cache: "no-store" });
-  return readResponse<BlogPageData>(response);
+  const data = await readResponse<BlogPageData>(response);
+  return {
+    ...data,
+    items: data?.items ?? [],
+    categories: data?.categories ?? [],
+    totalCount: data?.totalCount ?? 0,
+    page: data?.page ?? 1,
+    pageSize: data?.pageSize ?? 9,
+  };
 }
 
 export async function getPublicBlog(slug: string): Promise<BlogPost> {
