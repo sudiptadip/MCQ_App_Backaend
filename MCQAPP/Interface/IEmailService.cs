@@ -6,5 +6,6 @@ namespace MCQAPP.Interface
     {
         Task<bool> SendEmailAsync(string toEmail, string subject, string bodyHtml, int franchiseId = 1);
         Task<bool> SendOtpEmailAsync(string toEmail, string studentName, string otp, int franchiseId = 1);
+        Task<bool> SendPasswordResetOtpEmailAsync(string toEmail, string studentName, string otp, int franchiseId = 1);
     }
 }

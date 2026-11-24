@@ -33,6 +33,9 @@ const UploadMcqQuestionAns = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [rows, setRows] = useState<UploadRow[]>([]);
     const [isDragging, setIsDragging] = useState(false);
+    const [fileName, setFileName] = useState<string>('');
+    const [sheetName, setSheetName] = useState<string>('');
+    const [lotNumber, setLotNumber] = useState<string>('');
 
     const { data: categories = [] } = useQuery({
         queryKey: ['categories'],
@@ -53,7 +56,9 @@ const UploadMcqQuestionAns = () => {
         mutationFn: bulkUpsertQuestionAns,
         onSuccess: (data) => {
             if (data.isSuccess) {
-                showToast.success('Questions uploaded successfully');
+                const res = data.data;
+                const lotMsg = res?.lot_number ? ` under Lot #${res.lot_number}` : '';
+                showToast.success(`Questions uploaded successfully${lotMsg}`);
                 queryClient.invalidateQueries({ queryKey: ['questions'] });
                 navigate('/question-ans');
             } else {
@@ -168,6 +173,9 @@ const UploadMcqQuestionAns = () => {
                 const ws = wb.Sheets[wsname];
                 const data = XLSX.utils.sheet_to_json<any>(ws, { header: 1 });
 
+                setFileName(file.name);
+                setSheetName(wsname);
+
                 // Skip header row and empty rows
                 const dataRows = data.slice(1).filter((r: any[]) => r.length > 0 && r.some(c => c !== undefined && c !== null && c !== ''));
                 
@@ -211,6 +219,9 @@ const UploadMcqQuestionAns = () => {
     const handleSave = () => {
         if (rows.length === 0) return;
 
+        const parsedLot = lotNumber ? parseInt(lotNumber.trim(), 10) : undefined;
+        const fullSheetName = fileName ? (sheetName ? `${fileName} (${sheetName})` : fileName) : undefined;
+
         const payload: UpsertQuestionPayload[] = rows.map(r => {
             const correctIndex = parseInt(r.correct_answer.toString()) - 1;
             
@@ -221,7 +232,9 @@ const UploadMcqQuestionAns = () => {
                     question_text: r.question_text,
                     question_explanation: r.question_explanation || undefined,
                     tag: r.tag || undefined,
-                    is_active: true
+                    is_active: true,
+                    upload_lot_number: parsedLot && !isNaN(parsedLot) ? parsedLot : undefined,
+                    sheet_name: fullSheetName,
                 },
                 options: [
                     { option_text: r.option1, is_correct: correctIndex === 0 },
@@ -232,7 +245,11 @@ const UploadMcqQuestionAns = () => {
             };
         });
 
-        bulkMutation.mutate(payload);
+        bulkMutation.mutate({
+            questions: payload,
+            lot_number: parsedLot && !isNaN(parsedLot) ? parsedLot : null,
+            sheet_name: fullSheetName || null,
+        });
     };
 
     const allValid = rows.length > 0 && rows.every(r => r.isValid);
@@ -292,6 +309,64 @@ const UploadMcqQuestionAns = () => {
 
             {rows.length > 0 && (
                 <div className="flex flex-col gap-4">
+                    {/* Batch & Sheet Info Card */}
+                    <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-lg border bg-card shadow-sm">
+                        <div className="flex flex-wrap items-center gap-6">
+                            <div className="flex items-center gap-2.5">
+                                <FileSpreadsheet className="text-primary w-5 h-5 flex-shrink-0" />
+                                <div>
+                                    <div className="text-xs text-muted-foreground font-medium">Sheet / File Name</div>
+                                    <div className="text-sm font-semibold text-foreground truncate max-w-xs" title={`${fileName} (${sheetName})`}>
+                                        {fileName || "Uploaded Sheet"} {sheetName ? <span className="text-xs font-normal text-muted-foreground">({sheetName})</span> : ''}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <label htmlFor="lotNumberInput" className="text-xs text-muted-foreground font-medium block">
+                                        Lot Number (Batch)
+                                    </label>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <input
+                                            id="lotNumberInput"
+                                            type="number"
+                                            min="1"
+                                            value={lotNumber}
+                                            onChange={(e) => setLotNumber(e.target.value)}
+                                            placeholder="Auto (Next Lot)"
+                                            className="w-36 px-2.5 py-1 text-sm rounded border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                                        />
+                                        <span className="text-xs text-muted-foreground italic">
+                                            {lotNumber ? `Assigned to Lot #${lotNumber}` : "Auto-increments next lot"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => {
+                                    setRows([]);
+                                    setFileName('');
+                                    setSheetName('');
+                                    setLotNumber('');
+                                }}
+                                className="px-3.5 py-1.5 text-sm font-medium border rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                Clear All
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={!allValid || bulkMutation.isPending}
+                                className="px-4 py-1.5 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors cursor-pointer"
+                            >
+                                {bulkMutation.isPending ? 'Saving...' : <><Save size={16} /> Save Valid Questions</>}
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="flex items-center justify-between">
                         <div className="flex gap-4">
                             <div className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
@@ -302,22 +377,6 @@ const UploadMcqQuestionAns = () => {
                                     <AlertCircle size={14} /> {invalidCount} Invalid
                                 </div>
                             )}
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setRows([])}
-                                className="px-4 py-2 text-sm font-medium border rounded-md hover:bg-accent"
-                            >
-                                Clear All
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                disabled={!allValid || bulkMutation.isPending}
-                                className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                            >
-                                {bulkMutation.isPending ? 'Saving...' : <><Save size={16} /> Save Valid Questions</>}
-                            </button>
                         </div>
                     </div>
 

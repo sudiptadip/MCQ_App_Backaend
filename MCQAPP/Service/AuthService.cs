@@ -443,6 +443,19 @@ namespace MCQAPP.Service
                 await _context.Students.AddAsync(student);
                 await _context.SaveChangesAsync();
 
+                // Assign categories if provided
+                if (dto.CategoryIds != null && dto.CategoryIds.Any())
+                {
+                    var validCategoryIds = dto.CategoryIds.Where(id => id > 0).Distinct().ToList();
+                    foreach (var catId in validCategoryIds)
+                    {
+                        await _context.Database.ExecuteSqlRawAsync(
+                            "IF NOT EXISTS (SELECT 1 FROM [dbo].[student_assigned_categories] WHERE [student_user_id] = {0} AND [category_id] = {1}) " +
+                            "INSERT INTO [dbo].[student_assigned_categories] ([student_user_id], [category_id], [assigned_at]) VALUES ({0}, {1}, GETDATE())",
+                            user.Id, catId);
+                    }
+                }
+
                 await transaction.CommitAsync();
 
                 return ApiResponse<string>.Success(null!, "Student registered successfully");
@@ -452,6 +465,242 @@ namespace MCQAPP.Service
                 await transaction.RollbackAsync();
                 return ApiResponse<string>.Fail("Something went wrong: " + ex.Message);
             }
+        }
+
+        public async Task<ApiResponse<BulkStudentResultDTO>> BulkRegisterStudents(List<RegisterStudentDTO> dtos)
+        {
+            if (dtos == null || !dtos.Any())
+                return ApiResponse<BulkStudentResultDTO>.Fail("No students provided for registration.");
+
+            var currentUser = _httpContextAccessor.HttpContext?.User;
+            if (currentUser == null || !currentUser.Identity!.IsAuthenticated)
+                return ApiResponse<BulkStudentResultDTO>.Fail("Unauthorized");
+
+            var role = currentUser.FindFirst(ClaimTypes.Role)?.Value;
+            if (role != SD.ROLE_FRANCHISE_ADMIN && role != SD.ROLE_SUPER_ADMIN)
+                return ApiResponse<BulkStudentResultDTO>.Fail("Access denied");
+
+            var franchiseIdStr = currentUser.FindFirst("FranchiseId")?.Value;
+            if (string.IsNullOrEmpty(franchiseIdStr))
+                return ApiResponse<BulkStudentResultDTO>.Fail("Franchise not found");
+
+            int franchiseId = int.Parse(franchiseIdStr);
+
+            var result = new BulkStudentResultDTO
+            {
+                TotalProcessed = dtos.Count
+            };
+
+            // Pre-fetch all emails to minimize individual database round trips
+            var inputEmails = dtos
+                .Where(d => !string.IsNullOrWhiteSpace(d.Email))
+                .Select(d => d.Email.Trim().ToLower())
+                .Distinct()
+                .ToList();
+
+            var existingEmails = await _context.Users
+                .Where(u => inputEmails.Contains(u.Email.ToLower()))
+                .Select(u => u.Email.ToLower())
+                .ToListAsync();
+
+            var usedEmails = new HashSet<string>(existingEmails, StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < dtos.Count; i++)
+            {
+                var dto = dtos[i];
+                int rowNumber = i + 1;
+                string cleanEmail = (dto.Email ?? "").Trim().ToLower();
+
+                if (string.IsNullOrWhiteSpace(cleanEmail))
+                {
+                    result.FailureCount++;
+                    result.Errors.Add($"Row #{rowNumber}: Email is required.");
+                    continue;
+                }
+
+                if (usedEmails.Contains(cleanEmail))
+                {
+                    result.FailureCount++;
+                    result.Errors.Add($"Row #{rowNumber} ({dto.Name}): Email '{dto.Email}' already exists.");
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(dto.Name) || dto.Name.Trim().Length < 2)
+                {
+                    result.FailureCount++;
+                    result.Errors.Add($"Row #{rowNumber}: Student name must be at least 2 characters.");
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(dto.Password) || dto.Password.Length < 6)
+                {
+                    result.FailureCount++;
+                    result.Errors.Add($"Row #{rowNumber} ({dto.Name}): Password must be at least 6 characters.");
+                    continue;
+                }
+
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    var user = new User
+                    {
+                        Name = dto.Name.Trim(),
+                        Email = dto.Email.Trim(),
+                        PasswordHash = HashPassword(dto.Password),
+                        Role = SD.ROLE_STUDENT,
+                        FranchiseId = franchiseId,
+                        IsVerified = true,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    await _context.Users.AddAsync(user);
+                    await _context.SaveChangesAsync();
+                    await UpsertUserPasswordAsync(user.Id, dto.Password);
+
+                    string enrollmentNo = "STU-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")
+                                          + new Random().Next(100, 999);
+
+                    var student = new Student
+                    {
+                        UserId = user.Id,
+                        FranchiseId = franchiseId,
+                        EnrollmentNo = enrollmentNo,
+                        Email = user.Email,
+                        MobileNo = string.IsNullOrWhiteSpace(dto.MobileNo) ? null : dto.MobileNo.Trim(),
+                        ParentName = string.IsNullOrWhiteSpace(dto.ParentName) ? null : dto.ParentName.Trim(),
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    await _context.Students.AddAsync(student);
+                    await _context.SaveChangesAsync();
+
+                    if (dto.CategoryIds != null && dto.CategoryIds.Any())
+                    {
+                        var validCatIds = dto.CategoryIds.Where(id => id > 0).Distinct().ToList();
+                        foreach (var catId in validCatIds)
+                        {
+                            await _context.Database.ExecuteSqlRawAsync(
+                                "IF NOT EXISTS (SELECT 1 FROM [dbo].[student_assigned_categories] WHERE [student_user_id] = {0} AND [category_id] = {1}) " +
+                                "INSERT INTO [dbo].[student_assigned_categories] ([student_user_id], [category_id], [assigned_at]) VALUES ({0}, {1}, GETDATE())",
+                                user.Id, catId);
+                        }
+                    }
+
+                    await transaction.CommitAsync();
+
+                    usedEmails.Add(cleanEmail);
+                    result.SuccessCount++;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    result.FailureCount++;
+                    result.Errors.Add($"Row #{rowNumber} ({dto.Name}): {ex.Message}");
+                }
+            }
+
+            string summary = $"{result.SuccessCount} out of {result.TotalProcessed} students registered successfully.";
+            if (result.FailureCount > 0)
+            {
+                summary += $" {result.FailureCount} failed.";
+            }
+
+            return ApiResponse<BulkStudentResultDTO>.Success(result, summary);
+        }
+
+        public async Task<ApiResponse<List<string>>> CheckExistingEmails(List<string> emails)
+        {
+            if (emails == null || !emails.Any())
+                return ApiResponse<List<string>>.Success(new List<string>(), "No emails provided.");
+
+            var cleanEmails = emails
+                .Where(e => !string.IsNullOrWhiteSpace(e))
+                .Select(e => e.Trim().ToLower())
+                .Distinct()
+                .ToList();
+
+            var existingEmails = await _context.Users
+                .Where(u => cleanEmails.Contains(u.Email.ToLower()))
+                .Select(u => u.Email.ToLower())
+                .Distinct()
+                .ToListAsync();
+
+            return ApiResponse<List<string>>.Success(existingEmails, $"{existingEmails.Count} existing emails found in database.");
+        }
+
+        public async Task<ApiResponse<string>> ForgotPasswordAsync(ForgotPasswordRequestDTO dto)
+        {
+            string cleanEmail = dto.Email.Trim().ToLower();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == cleanEmail);
+            if (user == null)
+            {
+                return ApiResponse<string>.Fail("No account found with this email address.");
+            }
+
+            // Only allow password reset for WEB_STUDENT
+            if (user.Role != SD.ROLE_WEB_STUDENT)
+            {
+                return ApiResponse<string>.Fail("Password reset via OTP is only available for online student accounts.");
+            }
+
+            string otp = new Random().Next(100000, 999999).ToString();
+            user.Otp = otp;
+            user.OtpExpiry = DateTime.UtcNow.AddMinutes(15);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            int franchiseId = user.FranchiseId ?? 1;
+            bool emailSent = await _emailService.SendPasswordResetOtpEmailAsync(user.Email, user.Name, otp, franchiseId);
+
+            if (!emailSent)
+            {
+                return ApiResponse<string>.Fail("Failed to send OTP email. Please verify your email or try again later.");
+            }
+
+            return ApiResponse<string>.Success(null!, "A password reset OTP has been sent to your email address.");
+        }
+
+        public async Task<ApiResponse<string>> ResetPasswordAsync(ResetPasswordDTO dto)
+        {
+            string cleanEmail = dto.Email.Trim().ToLower();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == cleanEmail);
+            if (user == null)
+            {
+                return ApiResponse<string>.Fail("No account found with this email address.");
+            }
+
+            // Only allow password reset for WEB_STUDENT
+            if (user.Role != SD.ROLE_WEB_STUDENT)
+            {
+                return ApiResponse<string>.Fail("Password reset via OTP is only available for online student accounts.");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.Otp) || user.Otp != dto.Otp.Trim())
+            {
+                return ApiResponse<string>.Fail("Invalid OTP code.");
+            }
+
+            if (user.OtpExpiry == null || user.OtpExpiry < DateTime.UtcNow)
+            {
+                return ApiResponse<string>.Fail("OTP code has expired. Please request a new OTP.");
+            }
+
+            user.PasswordHash = HashPassword(dto.NewPassword);
+            user.Otp = null;
+            user.OtpExpiry = null;
+            user.IsVerified = true;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            await UpsertUserPasswordAsync(user.Id, dto.NewPassword);
+
+            return ApiResponse<string>.Success(null!, "Password reset successfully! You can now log in with your new password.");
         }
     }
 }

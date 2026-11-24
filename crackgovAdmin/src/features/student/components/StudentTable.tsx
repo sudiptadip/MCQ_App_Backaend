@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import ActionButton from '../../franchise/components/ActionButton';
-import { Eye, Plus, Smartphone, BookOpen } from 'lucide-react';
+import { Eye, Plus, Smartphone, BookOpen, FileSpreadsheet } from 'lucide-react';
 import { DataTable, type ColumnDef } from '../../../components/ui/DataTable';
 import { PasswordCell } from '../../../components/ui/PasswordCell';
 import { getStudents, resetUserDevice, type StudentListItem } from '../api/student.api';
@@ -169,13 +169,22 @@ const StudentTable = () => {
                 enableColumnVisibility
                 onRowClick={(row) => navigate(`/student/details/${row.id}`)}
                 toolbarActions={
-                    <button
-                        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
-                        onClick={() => navigate("/student/create")}
-                    >
-                        <Plus size={14} />
-                        Add Student
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md border border-input bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                            onClick={() => navigate("/student/create?mode=bulk")}
+                        >
+                            <FileSpreadsheet size={14} />
+                            Upload Excel
+                        </button>
+                        <button
+                            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
+                            onClick={() => navigate("/student/create")}
+                        >
+                            <Plus size={14} />
+                            Add Student
+                        </button>
+                    </div>
                 }
             />
 

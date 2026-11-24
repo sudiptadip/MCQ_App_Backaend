@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, ShieldAlert } from 'lucide-react';
 import { DataTable, type ColumnDef } from '../../../components/ui/DataTable';
 import { getQuestionAnsList, deleteQuestionAns, type QuestionWithDetails } from '../api/mcq.api';
 import Error from '../../../components/common/Error';
 import { showToast } from '../../../utils/toast';
+import { storage } from '../../../utils/storage';
+import { STORAGE_KEYS, ROLES } from '../../../constants';
+import type { User } from '../../auth/types';
 
 export function ActionButton({
     children,
@@ -35,6 +38,8 @@ export function ActionButton({
 const McqQuestionAnsTable = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const currentUser = storage.get<User>(STORAGE_KEYS.USER);
+    const isSuperAdmin = currentUser?.role === ROLES.SUPER_ADMIN;
 
     const deleteMutation = useMutation({
         mutationFn: deleteQuestionAns,
@@ -104,6 +109,37 @@ const McqQuestionAnsTable = () => {
             }
         },
         {
+            accessorFn: (row: QuestionWithDetails) => row?.question?.upload_lot_number ?? row?.upload_lot_number,
+            id: "upload_lot_number",
+            header: "Lot / Sheet",
+            cell: ({ row }) => {
+                const lot = row?.original?.question?.upload_lot_number ?? row?.original?.upload_lot_number;
+                const sheet = row?.original?.question?.sheet_name ?? row?.original?.sheet_name;
+
+                if (!lot && !sheet) {
+                    return <span className="text-muted-foreground text-xs">—</span>;
+                }
+
+                return (
+                    <div className="flex flex-col gap-0.5 max-w-[150px]">
+                        {lot ? (
+                            <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                                Lot #{lot}
+                            </span>
+                        ) : null}
+                        {sheet ? (
+                            <span 
+                                className="text-[11px] text-muted-foreground truncate" 
+                                title={sheet}
+                            >
+                                {sheet}
+                            </span>
+                        ) : null}
+                    </div>
+                );
+            }
+        },
+        {
             id: "options",
             header: "Correct Answer",
             cell: ({ row }) => {
@@ -154,16 +190,24 @@ const McqQuestionAnsTable = () => {
         },
     ];
 
-    const [pageIndex, setPageIndex] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState('');
+
+    // Cursor-based pagination state
+    const [cursor, setCursor] = useState<number | null>(null);
+    const [direction, setDirection] = useState<'next' | 'prev'>('next');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [cachedTotalCount, setCachedTotalCount] = useState<number | undefined>(undefined);
 
     // Debounce search keyword changes to avoid excessive API requests
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearchKeyword(searchKeyword);
-            setPageIndex(0); // Reset to first page when search query changes
+            setCursor(null);
+            setDirection('next');
+            setCurrentPage(1);
+            setCachedTotalCount(undefined); // Refresh total count when searching
         }, 500);
 
         return () => clearTimeout(timer);
@@ -172,19 +216,56 @@ const McqQuestionAnsTable = () => {
     const {
         data,
         isLoading,
+        isFetching,
         isError,
         refetch
     } = useQuery({
-        queryKey: ['questions', pageIndex + 1, pageSize, debouncedSearchKeyword],
+        queryKey: ['questions', cursor, direction, pageSize, debouncedSearchKeyword],
         queryFn: () => getQuestionAnsList({
-            pageNumber: pageIndex + 1,
+            cursor,
+            direction,
             pageSize,
-            searchKeyword: debouncedSearchKeyword
+            searchKeyword: debouncedSearchKeyword,
+            includeTotalCount: cachedTotalCount === undefined ? 1 : 0
         })
     });
 
+    // Cache totalCount when returned by API
+    useEffect(() => {
+        if (data?.totalCount !== undefined && data.totalCount > 0) {
+            setCachedTotalCount(data.totalCount);
+        }
+    }, [data?.totalCount]);
+
     const questions = data?.questions ?? [];
-    const totalCount = data?.totalCount ?? 0;
+    const totalCount = cachedTotalCount ?? data?.totalCount ?? 0;
+
+    const handleNextPage = () => {
+        if (!data?.hasNextPage || !data?.endCursor) return;
+        setCursor(data.endCursor);
+        setDirection('next');
+        setCurrentPage((prev) => prev + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (!data?.hasPrevPage || !data?.startCursor) return;
+        setCursor(data.startCursor);
+        setDirection('prev');
+        setCurrentPage((prev) => Math.max(1, prev - 1));
+    };
+
+    const handleFirstPage = () => {
+        setCursor(null);
+        setDirection('next');
+        setCurrentPage(1);
+    };
+
+    const handlePageSizeChange = (newSize: number) => {
+        setPageSize(newSize);
+        setCursor(null);
+        setDirection('next');
+        setCurrentPage(1);
+    };
 
     if (isError) {
         return (
@@ -206,29 +287,44 @@ const McqQuestionAnsTable = () => {
                 columns={columns}
                 title="MCQ Questions Management"
                 description="All configured multiple choice questions."
-                enableSorting
+                enableSorting={false}
                 enableSearch
-                searchPlaceholder="Search questions..."
+                searchPlaceholder="Search questions, sheet, lot #..."
                 enablePagination
-                defaultPageSize={10}
-                manualPagination={true}
-                totalRows={totalCount}
-                paginationState={{ pageIndex, pageSize }}
-                onPaginationChange={(page, size) => {
-                    setPageIndex(page);
-                    setPageSize(size);
+                cursorPagination={{
+                    hasNextPage: Boolean(data?.hasNextPage),
+                    hasPrevPage: Boolean(data?.hasPrevPage && currentPage > 1),
+                    onNextPage: handleNextPage,
+                    onPrevPage: handlePrevPage,
+                    onFirstPage: handleFirstPage,
+                    currentPage,
+                    pageSize,
+                    onPageSizeChange: handlePageSizeChange,
+                    totalRows: totalCount,
+                    currentRowsCount: questions.length,
+                    isLoading: isLoading || isFetching,
                 }}
                 onSearchChange={(val) => {
                     setSearchKeyword(val);
                 }}
                 onRowClick={(row: any) => {
-                    const id = row?.original?.question?.id ?? row?.original?.id;
+                    const id = row?.question?.id ?? row?.id ?? row?.original?.question?.id ?? row?.original?.id;
                     if (id) {
-                        navigate(`/question-ans/edit/${id}`, { state: { questionData: row.original } });
+                        navigate(`/question-ans/edit/${id}`, { state: { questionData: row?.original ?? row } });
                     }
                 }}
                 toolbarActions={
                     <div className="flex items-center gap-2">
+                        {isSuperAdmin && (
+                            <button
+                                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md border border-rose-500/30 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800 dark:hover:bg-rose-900/50 transition-colors cursor-pointer"
+                                onClick={() => navigate("/question-ans/advanced-delete")}
+                                title="Advanced delete: duplicate questions & sheet lot numbers (Super Admin only)"
+                            >
+                                <ShieldAlert size={14} className="text-rose-600 dark:text-rose-400" />
+                                Advance Delete
+                            </button>
+                        )}
                         <button
                             className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
                             onClick={() => navigate("/question-ans/upload")}

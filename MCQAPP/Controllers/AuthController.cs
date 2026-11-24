@@ -43,6 +43,26 @@ namespace MCQAPP.Controllers
             return Ok(result);
         }
 
+        [HttpPost("bulk-register-students")]
+        [Authorize(Roles = $"{SD.ROLE_SUPER_ADMIN},{SD.ROLE_FRANCHISE_ADMIN}")]
+        public async Task<IActionResult> BulkRegisterStudents([FromBody] List<RegisterStudentDTO> dtos)
+        {
+            var result = await _authService.BulkRegisterStudents(dtos);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("check-existing-emails")]
+        [Authorize(Roles = $"{SD.ROLE_SUPER_ADMIN},{SD.ROLE_FRANCHISE_ADMIN}")]
+        public async Task<IActionResult> CheckExistingEmails([FromBody] List<string> emails)
+        {
+            var result = await _authService.CheckExistingEmails(emails);
+            return Ok(result);
+        }
+
         [HttpPost("register-web-student")]
         [AllowAnonymous]
         public async Task<IActionResult> RegisterWebStudent(RegisterWebStudentDTO dto)
@@ -97,6 +117,36 @@ namespace MCQAPP.Controllers
             }
 
             var result = await _authService.LoginAsync(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(dto);
+
+            var result = await _authService.ForgotPasswordAsync(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(dto);
+
+            var result = await _authService.ResetPasswordAsync(dto);
 
             if (!result.IsSuccess)
                 return BadRequest(result);

@@ -7,4 +7,6 @@ export interface Question {
     tag?: string; // comma separated string 
     image_url?: string | null;
     image_document_id?: number | null;
+    upload_lot_number?: number | null;
+    sheet_name?: string | null;
 }

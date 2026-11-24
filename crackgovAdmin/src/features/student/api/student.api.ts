@@ -30,6 +30,29 @@ export const registerStudent = async (payload: RegisterStudentDto): Promise<apiR
   return response.data;
 };
 
+export interface BulkStudentResult {
+  totalProcessed: number;
+  successCount: number;
+  failureCount: number;
+  errors: string[];
+}
+
+export const bulkRegisterStudents = async (
+  students: RegisterStudentDto[]
+): Promise<apiResponse<BulkStudentResult>> => {
+  const response = await api.post(API_ROUTES.BULK_REGISTER_STUDENTS, students);
+  return response.data;
+};
+
+export const checkExistingEmails = async (emails: string[]): Promise<string[]> => {
+  if (!emails || emails.length === 0) return [];
+  const response = await api.post(API_ROUTES.CHECK_EXISTING_EMAILS, emails);
+  if (response.data.isSuccess) {
+    return (response.data.data as string[]) || [];
+  }
+  return [];
+};
+
 export const getStudentDetailsByUserId = async (userId: number): Promise<Student | null> => {
   const response = await api.post(API_ROUTES.GET_STUDENT_DETAILS, { user_id: userId });
   if (response.data.isSuccess) {
@@ -61,6 +84,16 @@ export const getStudentCategories = async (studentUserId: number): Promise<Stude
     return (response.data.data as StudentCategory[]) || [];
   }
   throw new Error(response.data.message || "Failed to fetch student categories");
+};
+
+export const getAvailableCategories = async (): Promise<StudentCategory[]> => {
+  const response = await api.post(API_ROUTES.GET_STUDENT_CATEGORIES, {
+    student_user_id: 0
+  });
+  if (response.data.isSuccess) {
+    return (response.data.data as StudentCategory[]) || [];
+  }
+  throw new Error(response.data.message || "Failed to fetch categories");
 };
 
 export const toggleStudentCategory = async (payload: {

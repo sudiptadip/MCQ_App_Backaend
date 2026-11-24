@@ -2,6 +2,21 @@ import type { ColumnDef, SortingState, ColumnFiltersState, VisibilityState } fro
 
 export type { ColumnDef };
 
+export interface CursorPaginationConfig {
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  onNextPage: () => void;
+  onPrevPage: () => void;
+  onFirstPage?: () => void;
+  currentPage?: number;
+  pageSize: number;
+  onPageSizeChange: (newPageSize: number) => void;
+  pageSizeOptions?: number[];
+  totalRows?: number;
+  currentRowsCount?: number;
+  isLoading?: boolean;
+}
+
 export interface DataTableProps<TData> {
   /** The data array to render in the table */
   data: TData[];
@@ -55,5 +70,7 @@ export interface DataTableProps<TData> {
   onPaginationChange?: (pageIndex: number, pageSize: number) => void;
   /** Callback fired when search term changes */
   onSearchChange?: (searchValue: string) => void;
+  /** Cursor-based pagination configuration */
+  cursorPagination?: CursorPaginationConfig;
 }
 

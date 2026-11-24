@@ -7,5 +7,6 @@
         public string Password { get; set; } = null!;
         public string? MobileNo { get; set; }
         public string? ParentName { get; set; }
+        public List<int>? CategoryIds { get; set; }
     }
 }

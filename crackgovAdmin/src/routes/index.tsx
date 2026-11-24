@@ -16,6 +16,7 @@ import UpsertCategoryPage from "../pages/category/UpsertCategoryPage";
 import McqQuestionAnsListPage from "../pages/mcq/McqQuestionAnsListPage";
 import UpsertMcqQuestionAnsPage from "../pages/mcq/UpsertMcqQuestionAnsPage";
 import UploadMcqQuestionAnsPage from "../pages/mcq/UploadMcqQuestionAnsPage";
+import AdvancedDeleteQuestionsPage from "../pages/mcq/AdvancedDeleteQuestionsPage";
 import TestListPage from "../pages/test/TestListPage";
 import UpsertTestPage from "../pages/test/UpsertTestPage";
 import TestDetailsPage from "../pages/test/TestDetailsPage";
@@ -143,6 +144,16 @@ export const router = createBrowserRouter([
                             {
                                 path: "upload",
                                 element: <UploadMcqQuestionAnsPage />
+                            },
+                            {
+                                path: "advanced-delete",
+                                element: <AdminOnlyRoute />,
+                                children: [
+                                    {
+                                        index: true,
+                                        element: <AdvancedDeleteQuestionsPage />
+                                    }
+                                ]
                             },
                             {
                                 path: "edit/:id",

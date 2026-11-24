@@ -1,4 +1,8 @@
-﻿CREATE PROCEDURE [dbo].[SpStudentCategories]
+﻿SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[SpStudentCategories]
     @Mode INT,
     @Json NVARCHAR(MAX) = NULL,
     @UserId INT = NULL,
@@ -14,31 +18,17 @@ BEGIN
     -------------------------------------------------
     -- MODE 1: GET CATEGORIES AND MAPPING FOR A STUDENT
     -------------------------------------------------
-        -------------------------------------------------
-    -- MODE 1: GET CATEGORIES AND MAPPING FOR A STUDENT
-    -------------------------------------------------
     IF (@Mode = 1)
     BEGIN
-        -- Parse student_user_id from Json input
+        -- Parse student_user_id from Json input (optional, defaults to 0 for all available categories)
         SELECT 
-            @student_user_id = student_user_id
-        FROM OPENJSON(@Json)
+            @student_user_id = ISNULL(student_user_id, 0)
+        FROM OPENJSON(ISNULL(@Json, '{}'))
         WITH (
             student_user_id INT '$.student_user_id'
         );
 
-        IF (@student_user_id IS NULL)
-        BEGIN
-            SET @Output = JSON_QUERY((
-                SELECT 
-                    400 AS StatusCode,
-                    0 AS IsSuccess,
-                    'student_user_id is required' AS [Message],
-                    NULL AS Response
-                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-            ));
-            RETURN;
-        END
+        SET @student_user_id = ISNULL(@student_user_id, 0);
 
         -- Recursive CTE to fetch all categories assigned to the franchise and their children
         ;WITH recursivecte AS (

@@ -52,6 +52,8 @@ namespace MCQAPP.Controllers
                     Direction = ParameterDirection.Output
                 };
 
+                _db.Database.SetCommandTimeout(180);
+
                 await _db.Database.ExecuteSqlRawAsync(
                     $"EXEC {spName} @Mode, @Json, @UserId, @FranchiseId, @Output OUTPUT",
                     modeParam, jsonParam, userIdParam, @franchiseIdParams, outputParam
@@ -149,6 +151,8 @@ namespace MCQAPP.Controllers
                     Direction = ParameterDirection.Output
                 };
 
+                _db.Database.SetCommandTimeout(180);
+
                 await _db.Database.ExecuteSqlRawAsync(
                     $"EXEC {spName} @Mode, @Json, @UserId, @FranchiseId, @Output OUTPUT",
                     modeParam, jsonParam, userIdParam, @franchiseIdParams, outputParam
@@ -245,6 +249,8 @@ namespace MCQAPP.Controllers
                 {
                     Direction = ParameterDirection.Output
                 };
+
+                _db.Database.SetCommandTimeout(180);
 
                 await _db.Database.ExecuteSqlRawAsync(
                     $"EXEC {spName} @Mode, @Json, @UserId, @FranchiseId, @Output OUTPUT",

@@ -10,6 +10,7 @@
     [tag]                  NVARCHAR (500) NULL,
     [image_document_id]    INT            NULL,
     [upload_lot_number]    INT            NULL,
+    [sheet_name]           NVARCHAR (255) NULL,
     CONSTRAINT [PK__question__3213E83F88673D17] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [CK__questions__diffi__70DDC3D8] CHECK ([difficulty_level]='hard' OR [difficulty_level]='medium' OR [difficulty_level]='easy'),
     CONSTRAINT [FK_questions_category] FOREIGN KEY ([category_id]) REFERENCES [dbo].[categories] ([id]),
@@ -21,4 +22,8 @@
 GO
 CREATE NONCLUSTERED INDEX [IX_questions_franchise_category]
     ON [dbo].[questions]([franchise_id] ASC, [category_id] ASC);
+
+GO
+CREATE NONCLUSTERED INDEX [IX_questions_lot]
+    ON [dbo].[questions]([upload_lot_number] ASC, [franchise_id] ASC);
 

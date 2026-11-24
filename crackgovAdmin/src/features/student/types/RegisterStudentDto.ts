@@ -4,4 +4,5 @@ export default interface RegisterStudentDto {
     password: string;
     mobileNo: string;
     parentName: string;
+    categoryIds?: number[];
 }

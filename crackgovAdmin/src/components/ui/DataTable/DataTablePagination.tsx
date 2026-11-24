@@ -1,17 +1,118 @@
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import type { Table } from "@tanstack/react-table";
+import type { CursorPaginationConfig } from "./types";
 
 interface DataTablePaginationProps<TData> {
-  table: Table<TData>;
+  table?: Table<TData>;
   pageSizeOptions?: number[];
-  totalRows: number;
+  totalRows?: number;
+  cursorPagination?: CursorPaginationConfig;
 }
 
 export function DataTablePagination<TData>({
   table,
   pageSizeOptions = [5, 10, 20, 50, 100],
-  totalRows,
+  totalRows = 0,
+  cursorPagination,
 }: DataTablePaginationProps<TData>) {
+  // If cursor-based pagination is provided, render cursor controls
+  if (cursorPagination) {
+    const {
+      hasNextPage,
+      hasPrevPage,
+      onNextPage,
+      onPrevPage,
+      onFirstPage,
+      currentPage = 1,
+      pageSize,
+      onPageSizeChange,
+      pageSizeOptions: cursorSizeOptions = pageSizeOptions,
+      totalRows: cursorTotalRows,
+      currentRowsCount = 0,
+      isLoading = false,
+    } = cursorPagination;
+
+    return (
+      <div className="flex flex-wrap items-center justify-between gap-4 py-3 border-t border-border">
+        {/* Rows info + page size selector */}
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span>
+            {cursorTotalRows !== undefined
+              ? cursorTotalRows === 0
+                ? "No questions"
+                : `Showing ${currentRowsCount} of ${cursorTotalRows.toLocaleString()} questions`
+              : currentRowsCount > 0
+              ? `Showing ${currentRowsCount} questions`
+              : "No questions"}
+          </span>
+
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="datatable-page-size" className="text-xs">
+              Rows per page:
+            </label>
+            <select
+              id="datatable-page-size"
+              value={pageSize}
+              onChange={(e) => {
+                onPageSizeChange(Number(e.target.value));
+              }}
+              disabled={isLoading}
+              className="text-sm rounded border border-input bg-background px-2 py-1 focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            >
+              {cursorSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Cursor Navigation buttons */}
+        <div className="flex items-center gap-1.5">
+          {onFirstPage && (
+            <PaginationButton
+              id="datatable-first-page"
+              onClick={onFirstPage}
+              disabled={!hasPrevPage || isLoading || currentPage <= 1}
+              title="First page"
+            >
+              <ChevronsLeft size={15} />
+            </PaginationButton>
+          )}
+
+          <button
+            id="datatable-prev-page"
+            onClick={onPrevPage}
+            disabled={!hasPrevPage || isLoading}
+            title="Previous page"
+            className="flex items-center gap-1 px-2.5 h-8 rounded border border-input text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronLeft size={15} />
+            <span>Previous</span>
+          </button>
+
+          <span className="min-w-[70px] text-center px-2.5 py-1 text-xs font-semibold rounded-md border border-input bg-accent/40 text-foreground">
+            Page {currentPage}
+          </span>
+
+          <button
+            id="datatable-next-page"
+            onClick={onNextPage}
+            disabled={!hasNextPage || isLoading}
+            title="Next page"
+            className="flex items-center gap-1 px-2.5 h-8 rounded border border-input text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <span>Next</span>
+            <ChevronRight size={15} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!table) return null;
+
   const { pageIndex, pageSize } = table.getState().pagination;
   const from = totalRows === 0 ? 0 : pageIndex * pageSize + 1;
   const to = Math.min((pageIndex + 1) * pageSize, totalRows);

@@ -47,6 +47,7 @@ export function DataTable<TData>({
   paginationState,
   onPaginationChange,
   onSearchChange,
+  cursorPagination,
 }: DataTableProps<TData>) {
   // ── State ──────────────────────────────────────────────────────────────────
   const [sorting, setSorting] = React.useState<SortingState>(initialSorting);
@@ -95,8 +96,8 @@ export function DataTable<TData>({
     } : {}),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
-    getFilteredRowModel: (enableSearch || columnFilters.length > 0) && !manualPagination ? getFilteredRowModel() : undefined,
-    getPaginationRowModel: enablePagination && !manualPagination ? getPaginationRowModel() : undefined,
+    getFilteredRowModel: (enableSearch || columnFilters.length > 0) && !manualPagination && !cursorPagination ? getFilteredRowModel() : undefined,
+    getPaginationRowModel: enablePagination && !manualPagination && !cursorPagination ? getPaginationRowModel() : undefined,
     initialState: {
       pagination: { pageSize: defaultPageSize },
     },
@@ -238,12 +239,13 @@ export function DataTable<TData>({
       </div>
 
       {/* Pagination */}
-      {enablePagination && !isLoading && (
+      {enablePagination && (!isLoading || Boolean(cursorPagination)) && (
         <div className="px-4">
           <DataTablePagination
             table={table}
             pageSizeOptions={pageSizeOptions}
             totalRows={manualPagination && totalRows !== undefined ? totalRows : totalFilteredRows}
+            cursorPagination={cursorPagination}
           />
         </div>
       )}

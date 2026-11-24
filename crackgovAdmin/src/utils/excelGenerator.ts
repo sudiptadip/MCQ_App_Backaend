@@ -154,3 +154,82 @@ export const downloadMcqTemplate = async (categories: Category[]) => {
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, 'MCQ_Upload_Template.xlsx');
 };
+
+const STUDENT_TEMPLATE_HEADERS = [
+    'Student Name',
+    'Email Address',
+    'Mobile Number',
+    'Parent Name',
+    'Password',
+    'Categories (Comma Separated)'
+];
+
+export const downloadStudentTemplate = async (categories: { id: number; name: string }[]) => {
+    const workbook = new ExcelJS.Workbook();
+
+    // 1. Main Sheet
+    const mainSheet = workbook.addWorksheet('Students');
+
+    // Headers
+    mainSheet.addRow(STUDENT_TEMPLATE_HEADERS);
+    const headerRow = mainSheet.getRow(1);
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    headerRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF10B981' } // Emerald 500
+    };
+
+    mainSheet.columns = [
+        { width: 25 }, // Student Name
+        { width: 30 }, // Email Address
+        { width: 20 }, // Mobile Number
+        { width: 25 }, // Parent Name
+        { width: 18 }, // Password
+        { width: 45 }, // Categories
+    ];
+
+    // Sample data rows
+    const sampleCategoryExample = categories.slice(0, 2).map(c => c.name).join(', ') || 'General Science, Mathematics';
+
+    mainSheet.addRow([
+        'Rahul Sharma',
+        'rahul.sharma@example.com',
+        '9876543210',
+        'Rajesh Sharma',
+        'Pass@123',
+        sampleCategoryExample
+    ]);
+
+    mainSheet.addRow([
+        'Priya Patel',
+        'priya.patel@example.com',
+        '9123456780',
+        'Suresh Patel',
+        'Pass@123',
+        categories.length > 0 ? categories[0].name : 'General Science'
+    ]);
+
+    // 2. Reference Sheet for Available Category Names
+    const catSheet = workbook.addWorksheet('Available Categories');
+    catSheet.addRow(['Category ID', 'Category Name']);
+    const catHeader = catSheet.getRow(1);
+    catHeader.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    catHeader.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF4F46E5' } // Indigo 600
+    };
+    catSheet.columns = [
+        { width: 15 },
+        { width: 40 }
+    ];
+
+    categories.forEach(c => {
+        catSheet.addRow([c.id, c.name]);
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, 'Student_Bulk_Upload_Template.xlsx');
+};

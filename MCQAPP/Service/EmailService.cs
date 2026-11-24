@@ -127,5 +127,30 @@ namespace MCQAPP.Service
 
             return await SendEmailAsync(toEmail, subject, bodyHtml, franchiseId);
         }
+
+        public async Task<bool> SendPasswordResetOtpEmailAsync(string toEmail, string studentName, string otp, int franchiseId = 1)
+        {
+            var franchise = await _context.Franchises.FirstOrDefaultAsync(f => f.Id == franchiseId);
+            string franchiseName = franchise?.Name ?? "CrackGov Portal";
+
+            string subject = $"Password Reset OTP for {franchiseName} - {otp}";
+
+            string bodyHtml = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;'>
+                    <h2 style='color: #2563eb; text-align: center;'>{franchiseName}</h2>
+                    <hr style='border: 0; border-top: 1px solid #eee;' />
+                    <p>Dear <strong>{studentName}</strong>,</p>
+                    <p>We received a request to reset your password. Your One-Time Password (OTP) for password recovery is:</p>
+                    <div style='background-color: #f3f4f6; padding: 15px; text-align: center; border-radius: 6px; font-size: 26px; font-weight: bold; letter-spacing: 5px; color: #1f2937;'>
+                        {otp}
+                    </div>
+                    <p style='margin-top: 20px; font-size: 14px; color: #6b7280;'>This OTP is valid for 15 minutes. Please do not share this code with anyone.</p>
+                    <p style='font-size: 14px; color: #6b7280;'>If you did not request a password reset, please ignore this email.</p>
+                    <hr style='border: 0; border-top: 1px solid #eee; margin-top: 30px;' />
+                    <p style='text-align: center; font-size: 12px; color: #9ca3af;'>&copy; {DateTime.UtcNow.Year} {franchiseName}. All rights reserved.</p>
+                </div>";
+
+            return await SendEmailAsync(toEmail, subject, bodyHtml, franchiseId);
+        }
     }
 }
